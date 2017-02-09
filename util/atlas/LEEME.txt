@@ -1,0 +1,6 @@
+Comando para crear Atlas:
+
+java -cp gdx.jar;gdx-tools.jar com.badlogic.gdx.tools.texturepacker.TexturePacker dir1 dir2 nombreAtlas
+
+dir1: directorio que contiene las imágenes para convertir
+dir2: directorio donde se guarda el nombreAtlas.atlas y el nombreAtlas.png
