@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.gamesharp.jfenix13.Main;
+import com.gamesharp.jfenix13.general.Main;
 
 public class AndroidLauncher extends AndroidApplication {
 	@Override
