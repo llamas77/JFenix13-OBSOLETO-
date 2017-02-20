@@ -2,14 +2,15 @@ package com.gamesharp.jfenix13.resources.containers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.gamesharp.jfenix13.resources.objects.Grh;
+import com.gamesharp.jfenix13.resources.objects.GrhData;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import static com.gamesharp.jfenix13.general.FileNames.*;
 import static com.gamesharp.jfenix13.general.Util.*;
 
 public class Grhs {
-    private Grh[] grhs;
+    private GrhData[] grhsData;
 
     public Grhs() {
         try {
@@ -28,49 +29,50 @@ public class Grhs {
         int index;
         int cantFrames;
         short frame;
-        Grh grh;
+        GrhData grhData;
 
         FileHandle fh = Gdx.files.internal(getTexIndicesDir());
         DataInputStream dis = new DataInputStream(fh.read());
 
         dis.skipBytes(4);
-        grhs = new Grh[leReadInt(dis)];
+        grhsData = new GrhData[leReadInt(dis)];
 
         while (dis.available() > 0) {
             index = leReadInt(dis);
 
-            grh = new Grh();
-            setGrh(index, grh);
+            grhData = new GrhData();
+            setGrhData(index, grhData);
             cantFrames = leReadShort(dis);
 
             if (cantFrames == 1) {
-                if (index > 0 && index <= grhs.length)
-                    grh.addFrame((short)index);
-                grh.setFileNum(leReadInt(dis));
-                grh.getRect().setLeft(leReadShort(dis));
-                grh.getRect().setTop(leReadShort(dis));
-                grh.getRect().setWidth(leReadShort(dis));
-                grh.getRect().setHeight(leReadShort(dis));
+                if (index > 0 && index <= grhsData.length)
+                    grhData.addFrame((short)index);
+                grhData.setFileNum(leReadInt(dis));
+                grhData.getRect().setLeft(leReadShort(dis));
+                grhData.getRect().setTop(leReadShort(dis));
+                grhData.getRect().setWidth(leReadShort(dis));
+                grhData.getRect().setHeight(leReadShort(dis));
             }
             else {
                 for (int i = 0; i < cantFrames; i++) {
                     frame = leReadShort(dis);
-                    if (frame > 0 && frame <= grhs.length)
-                        grh.addFrame(frame);
+                    if (frame > 0 && frame <= grhsData.length)
+                        grhData.addFrame(frame);
                 }
-                grh.setSpeed(leReadFloat(dis));
-                grh.getRect().setWidth(getGrh(grh.getFrame((short)0)).getRect().getWidth());
-                grh.getRect().setHeight(getGrh(grh.getFrame((short)0)).getRect().getHeight());
+                grhData.setSpeed(leReadFloat(dis) / 550);
+                grhData.getRect().setWidth(getGrhData(grhData.getFrame((short)0)).getRect().getWidth());
+                grhData.getRect().setHeight(getGrhData(grhData.getFrame((short)0)).getRect().getHeight());
             }
         }
         dis.close();
     }
 
-    public Grh getGrh(int index) {
-        return grhs[index - 1];
+    public GrhData getGrhData(int index) {
+        return grhsData[index - 1];
     }
 
-    public void setGrh(int index, Grh grh) {
-        grhs[index - 1] = grh;
+    public void setGrhData(int index, GrhData grhData) {
+        grhsData[index - 1] = grhData;
     }
+
 }

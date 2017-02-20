@@ -4,20 +4,21 @@ import com.badlogic.gdx.utils.Array;
 import com.gamesharp.jfenix13.general.Rect;
 
 /**
- * Contiene la información de un solo Grh
+ * Contiene la información de un solo GrhData
  *
  * fileNum: número de textura
- * rect: contiene las coordenadas de los vértices del Grh en la textura
- * frames: colección de índices de Grh correspondientes a una animación
+ * rect: contiene las coordenadas de los vértices del GrhData en la textura
+ * frames: colección de índices de GrhData correspondientes a una animación
  * speed: velocidad de la animación
  */
-public class Grh {
+
+public class GrhData {
     private int fileNum;
     private Rect rect;
     private Array<Short> frames;
     private float speed;
 
-    public Grh() {
+    public GrhData() {
         frames = new Array();
         rect = new Rect();
     }

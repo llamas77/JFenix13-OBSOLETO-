@@ -41,14 +41,14 @@ public class Util {
         return buf.getInt(0);
     }
 
-    public static int leFloat(float n) {
+    public static float leFloat(float n) {
 
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.order(BIG_ENDIAN);
         buf.putFloat(n);
         buf.order(LITTLE_ENDIAN);
 
-        return buf.getInt(0);
+        return buf.getFloat(0);
     }
 
     public static byte leByte(byte n) {
