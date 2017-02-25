@@ -1,9 +1,11 @@
 package com.gamesharp.jfenix13.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.gamesharp.jfenix13.graphics.DrawParameter;
 import com.gamesharp.jfenix13.graphics.Drawer;
 import com.gamesharp.jfenix13.graphics.Grh;
 
@@ -29,7 +31,6 @@ public class Principal extends Screen {
                 return super.touchDown(event, x, y, pointer, button);
             }
         });
-
 
         lbFPS = new Label("FPS: 0", skin);
         lbFPS.setPosition(30, stage.getHeight() - 30);
@@ -63,14 +64,17 @@ public class Principal extends Screen {
 
         w.addActor(sb);
 
-        Touchpad tp = new Touchpad(10, skin);
+
+
+        /*Touchpad tp = new Touchpad(10, skin);
         tp.setBounds(15, 15, 200, 200);
         tp.setPosition(50, 50);
         stage.addActor(tp);
         stage.addActor(w);
+*/
 
+        g = new Grh((short)13021);
 
-        g = new Grh((short)12660);
     }
 
     @Override
@@ -80,7 +84,35 @@ public class Principal extends Screen {
         lbFPS.setText("FPS: " + Gdx.graphics.getFramesPerSecond());
 
         stage.getBatch().begin();
-        Drawer.drawGrh(g, 0, 0, (byte)1, (byte)1, stage.getBatch());
+
+
+        DrawParameter dp = new DrawParameter();
+        dp.setAnimated(true);
+
+        dp.setColor(255, 255, 255);
+
+        dp.setVertColor(0, 255, 0, 0);
+        dp.setVertColor(1, 255, 255, 0);
+        dp.setVertColor(2, 0, 255, 0);
+        dp.setVertColor(3, 0, 0, 255);
+
+        dp.setVertAlpha(0, 50);
+        dp.setVertAlpha(3, 50);
+
+
+        dp.setScale(4);
+
+        /*dp.setVertAlpha(0, 10);
+        dp.setVertAlpha(2, 10);*/
+
+        dp.setCenter(false);
+        dp.setFlipX(true);
+        //dp.setFlip(true);
+        dp.setRotation(60);
+        Drawer.drawGrh(stage.getBatch(), g, 300, 300, dp);
+
+
         stage.getBatch().end();
+
     }
 }

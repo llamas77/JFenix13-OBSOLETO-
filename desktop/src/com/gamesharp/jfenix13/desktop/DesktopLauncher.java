@@ -11,10 +11,12 @@ import static com.gamesharp.jfenix13.general.Main.*;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.fullscreen = true;
+		config.fullscreen = false;
 		config.width = SCR_WIDTH;
 		config.height = SCR_HEIGHT;
-		config.vSyncEnabled = true;
+		config.vSyncEnabled = false;
+		config.foregroundFPS = 0;
+		config.backgroundFPS = 0;
 		config.addIcon(getIconDir(), FileType.Internal);
 		new LwjglApplication(new Main(), config);
 	}
