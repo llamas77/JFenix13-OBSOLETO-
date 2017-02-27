@@ -3,6 +3,15 @@ package com.gamesharp.jfenix13.graphics;
 import com.gamesharp.jfenix13.general.Main;
 import com.gamesharp.jfenix13.resources.objects.GrhData;
 
+/**
+ * Contiene la información de una animación
+ *
+ * index: número que lo identifica
+ * frame: en caso de ser animación, es el número de fotograma de un momento determinado.
+ * speed: es la velociad que tiene la animación (en caso de ser animación).
+ * started: indica si se tiene que animar o no. (independientemente de que sea animación o no).
+ * loops: cantidad de veces que se repite una animación (en caso de serla).
+ */
 public class Grh {
     public static final int INF_LOOPS = -1;
 

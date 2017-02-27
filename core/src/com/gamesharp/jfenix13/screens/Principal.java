@@ -2,9 +2,14 @@ package com.gamesharp.jfenix13.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.gamesharp.jfenix13.graphics.DrawParameter;
 import com.gamesharp.jfenix13.graphics.Drawer;
 import com.gamesharp.jfenix13.graphics.Grh;
@@ -12,8 +17,10 @@ import com.gamesharp.jfenix13.graphics.Grh;
 
 public class Principal extends Screen {
     Label lbFPS;
-    Grh g;
+    Grh g, g2;
     TextButton tbCerrar;
+
+    SpriteBatch asd = new SpriteBatch();
 
 
     @Override
@@ -27,7 +34,8 @@ public class Principal extends Screen {
         tbCerrar.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.exit();
+                //Gdx.app.exit();
+                Gdx.graphics.setTitle("JFenix13 - FPS: " + Gdx.graphics.getFramesPerSecond());
                 return super.touchDown(event, x, y, pointer, button);
             }
         });
@@ -66,6 +74,7 @@ public class Principal extends Screen {
 
 
 
+
         /*Touchpad tp = new Touchpad(10, skin);
         tp.setBounds(15, 15, 200, 200);
         tp.setPosition(50, 50);
@@ -74,6 +83,7 @@ public class Principal extends Screen {
 */
 
         g = new Grh((short)13021);
+        g2 = new Grh((short)6825);
 
     }
 
@@ -83,33 +93,42 @@ public class Principal extends Screen {
 
         lbFPS.setText("FPS: " + Gdx.graphics.getFramesPerSecond());
 
+        int posx, posy;
+        DrawParameter dp;
+        dp = new DrawParameter();
+        dp.setAnimated(true);
+        dp.setCenter(true);
+
+
         stage.getBatch().begin();
 
+        Rectangle scissors = new Rectangle();
+        Rectangle clipBounds = new Rectangle(100,100,500,400);
+        ScissorStack.calculateScissors(stage.getCamera(), stage.getBatch().getTransformMatrix(), clipBounds, scissors);
+        ScissorStack.pushScissors(scissors);
+        //spriteBatch.draw(...);
 
-        DrawParameter dp = new DrawParameter();
-        dp.setAnimated(true);
+        for (int i = 0; i < 24; i++) {
+            posx = (32 * i);
+            for (int j = 0; j < 14; j++) {
+                posy = (32 * j);
 
-        dp.setColor(255, 255, 255);
-
-        dp.setVertColor(0, 255, 0, 0);
-        dp.setVertColor(1, 255, 255, 0);
-        dp.setVertColor(2, 0, 255, 0);
-        dp.setVertColor(3, 0, 0, 255);
-
-        dp.setVertAlpha(0, 50);
-        dp.setVertAlpha(3, 50);
+                Drawer.drawGrh(stage.getBatch(), g, posx, posy, dp);
+            }
+        }
 
 
-        dp.setScale(4);
+        stage.getBatch().flush();
+        ScissorStack.popScissors();
 
-        /*dp.setVertAlpha(0, 10);
-        dp.setVertAlpha(2, 10);*/
 
-        dp.setCenter(false);
-        dp.setFlipX(true);
-        //dp.setFlip(true);
-        dp.setRotation(60);
-        Drawer.drawGrh(stage.getBatch(), g, 300, 300, dp);
+
+
+
+
+
+        Drawer.drawGrh(stage.getBatch(), g2, 150, 150, dp);
+
 
 
         stage.getBatch().end();

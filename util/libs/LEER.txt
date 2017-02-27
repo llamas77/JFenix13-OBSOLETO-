@@ -1,0 +1,4 @@
+Esta librería (gdx-1.9.5.jar) está levemente modificada.
+Es necesario usar SÍ o SÍ esta.
+
+La otra librería (gdx-1.9.5-sources.jar) es útil para el IDE. También está modificada

@@ -52,6 +52,7 @@ public class Grhs {
                 grhData.getRect().setTop(leReadShort(dis));
                 grhData.getRect().setWidth(leReadShort(dis));
                 grhData.getRect().setHeight(leReadShort(dis));
+                grhData.updateTR();
             }
             else {
                 for (int i = 0; i < cantFrames; i++) {

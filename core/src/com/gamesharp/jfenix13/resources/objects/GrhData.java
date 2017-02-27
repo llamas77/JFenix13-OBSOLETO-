@@ -1,7 +1,9 @@
 package com.gamesharp.jfenix13.resources.objects;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.gamesharp.jfenix13.general.Rect;
+import com.gamesharp.jfenix13.graphics.Drawer;
 
 /**
  * Contiene la información de un solo GrhData
@@ -10,6 +12,7 @@ import com.gamesharp.jfenix13.general.Rect;
  * rect: contiene las coordenadas de los vértices del GrhData en la textura
  * frames: colección de índices de GrhData correspondientes a una animación
  * speed: velocidad de la animación
+ * tr: porcion de textura que lo representa (solo para Grhs no animados)
  */
 
 public class GrhData {
@@ -17,10 +20,12 @@ public class GrhData {
     private Rect rect;
     private Array<Short> frames;
     private float speed;
+    private TextureRegion tr;
 
     public GrhData() {
         frames = new Array();
         rect = new Rect();
+        tr = null;
     }
 
     public int getFileNum() {
@@ -58,5 +63,13 @@ public class GrhData {
     public void setSpeed(float speed) {
         if (speed >= 0)
             this.speed = speed;
+    }
+
+    public TextureRegion getTR() {
+        return tr;
+    }
+
+    public void updateTR() {
+        tr = Drawer.getTextureRegion(fileNum, rect);
     }
 }

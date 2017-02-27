@@ -77,6 +77,6 @@ public class Screen implements com.badlogic.gdx.Screen {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
     }
 }

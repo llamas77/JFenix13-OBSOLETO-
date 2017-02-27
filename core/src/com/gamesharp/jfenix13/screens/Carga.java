@@ -17,12 +17,13 @@ public class Carga extends Screen {
     public void show() {
         super.show();
         pb = new ProgressBar(0, 1, 0.0625f, false, skin);
-        pb.setPosition(0, 400);
+        pb.setPosition(0, 20);
         pb.setAnimateDuration(0.15f);
         pb.setSize(stage.getWidth(), 40);
 
         lb1 = new Label("Cargando...", skin);
         lb1.setPosition(pb.getX() + 10, pb.getY() + pb.getHeight() + 20);
+        lb1.setFontScale(1.2f);
 
         lb2 = new Label("0 %", skin);
         lb2.setPosition(pb.getX() + pb.getWidth() - 50, pb.getY() + pb.getHeight() + 20);
@@ -40,6 +41,7 @@ public class Carga extends Screen {
         float value;
 
         lb2.setText((int)(pb.getVisualValue() * 100) + " %");
+        lb2.setFontScale(1.2f);
 
         if (pb.getVisualValue() == pb.getValue()) {
             if (pb.getValue() == pb.getMaxValue()) {
