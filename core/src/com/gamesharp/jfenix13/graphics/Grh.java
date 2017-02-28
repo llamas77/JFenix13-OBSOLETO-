@@ -21,14 +21,14 @@ public class Grh {
     private byte started;
     private short loops;
 
-    public Grh(short index) {
-        this(index, 2);
+    public Grh(int index) {
+        this((short)index, 2);
     }
 
-    public Grh(short index, int started) {
+    public Grh(int index, int started) {
         GrhData grhData = Main.game.assets.getGrhs().getGrhData(index);
         if (index == 0) return;
-        this.index = index;
+        this.index = (short)index;
 
         if (started == 2) {
             if (grhData.getCantFrames() > 1)

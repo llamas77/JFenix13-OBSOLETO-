@@ -19,11 +19,12 @@ public class AssetsHandler {
     private AssetManager am;
 
     private Grhs grhs;
+    private Fonts fonts;
 
     public AssetsHandler() {
         am = new AssetManager();
         preloadAM();
-        am.finishLoadingAsset(getSkinLML());
+        am.finishLoadingAsset(getSkinFlat());
     }
 
     public AssetManager getAM() {
@@ -35,19 +36,22 @@ public class AssetsHandler {
      */
     private void preloadAM()
     {
+
         // Skin de la GUI
-        am.load(getSkinLML(), Skin.class);
+        am.load(getSkinFlat(), Skin.class);
 
         // Atlas de texturas
         am.load(getAtlasTexDir(), TextureAtlas.class);
 
         // Texturas grandes que no entraron en el atlas
-        FileHandle[] files = Gdx.files.internal(DIR_BIGTEXTURAS).list();
+        FileHandle[] files = Gdx.files.internal(getBigTexDir()).list();
         for (FileHandle f : files) {
             if (f.extension().toLowerCase().equals("png")) {
-                am.load(DIR_BIGTEXTURAS + "/" + f.name(), Texture.class);
+                am.load(getBigTexDir() + "/" + f.name(), Texture.class);
             }
         }
+
+        am.load(getAtlasFontTexDir(), TextureAtlas.class);
     }
 
 
@@ -65,9 +69,14 @@ public class AssetsHandler {
      */
     public void loadRemaining() {
         grhs = new Grhs();
+        fonts = new Fonts();
     }
 
     public Grhs getGrhs() {
         return grhs;
+    }
+
+    public Fonts getFonts() {
+        return fonts;
     }
 }

@@ -36,7 +36,7 @@ public class Screen implements com.badlogic.gdx.Screen {
 
     @Override
     public void show() {
-        skin = Main.game.assets.getAM().get(getSkinLML(), Skin.class);
+        skin = Main.game.assets.getAM().get(getSkinFlat(), Skin.class);
         stage = new Stage(new FitViewport(SCR_WIDTH, SCR_HEIGHT));
         width = stage.getWidth();
         height = stage.getHeight();

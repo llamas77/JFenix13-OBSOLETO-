@@ -82,8 +82,8 @@ public class Principal extends Screen {
         stage.addActor(w);
 */
 
-        g = new Grh((short)13021);
-        g2 = new Grh((short)6825);
+        g = new Grh(13021);
+        g2 = new Grh(6825);
 
     }
 
@@ -108,7 +108,7 @@ public class Principal extends Screen {
         ScissorStack.pushScissors(scissors);
         //spriteBatch.draw(...);
 
-        for (int i = 0; i < 24; i++) {
+        /*for (int i = 0; i < 24; i++) {
             posx = (32 * i);
             for (int j = 0; j < 14; j++) {
                 posy = (32 * j);
@@ -116,14 +116,10 @@ public class Principal extends Screen {
                 Drawer.drawGrh(stage.getBatch(), g, posx, posy, dp);
             }
         }
-
+*/
 
         stage.getBatch().flush();
         ScissorStack.popScissors();
-
-
-
-
 
 
 

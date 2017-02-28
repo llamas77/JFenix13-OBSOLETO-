@@ -1,12 +1,14 @@
 package com.gamesharp.jfenix13.graphics;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.gamesharp.jfenix13.general.Main;
 import com.gamesharp.jfenix13.general.Rect;
+import com.gamesharp.jfenix13.resources.objects.Char;
+import com.gamesharp.jfenix13.resources.objects.Font;
 import com.gamesharp.jfenix13.resources.objects.GrhData;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 
 import static com.gamesharp.jfenix13.graphics.Grh.*;
 import static com.gamesharp.jfenix13.general.FileNames.*;
@@ -20,6 +22,9 @@ import static com.badlogic.gdx.graphics.GL20.*;
  * dp: es un objeto que contiene los parametros por defecto para dibujar.
  */
 public final class Drawer {
+    public static final int PRINCIPAL = 0;
+    public static final int FUENTE = 1;
+
 
     private static DrawParameter dp;
 
@@ -43,7 +48,7 @@ public final class Drawer {
         if (dp.isAnimated()) {
             if (grh.getStarted() == 1) {
                 grh.setFrame(grh.getFrame() + (Gdx.graphics.getDeltaTime() * grhData.getCantFrames() / grh.getSpeed()));
-                if (grh.getFrame() > grhData.getCantFrames() + 1) {
+                if (grh.getFrame() >= grhData.getCantFrames() + 1) {
                     grh.setFrame(grh.getFrame() % grhData.getCantFrames());
 
                     if (grh.getLoops() != INF_LOOPS) {
@@ -75,27 +80,8 @@ public final class Drawer {
         draw(batch, grhDataCurrent.getTR(), x, y, dp);
     }
 
-
-    public static void draw(Batch batch, int numGrafico, int x, int y) {
-        draw(batch, numGrafico, x, y, dp);
-    }
-
-    /**
-     * Dibuja un gráfico contenido en el atlas de texturas.
-     */
-    public static void draw(Batch batch, int numGrafico, int x, int y, DrawParameter dp) {
-        draw(batch, getTextureRegion(numGrafico, null), x, y, dp);
-    }
-
-    public static void draw(Batch batch, int numGrafico, int x, int y, Rect r) {
-        draw(batch, numGrafico, x, y, r, dp);
-    }
-
-    /**
-     * Dibuja un subgráfico de un gráfico contenido en el atlas de texturas
-     */
-    public static void draw(Batch batch, int numGrafico, int x, int y, Rect r, DrawParameter dp) {
-        draw(batch, getTextureRegion(numGrafico, r), x, y, dp);
+    public static void draw(Batch batch, TextureRegion reg, int x, int y) {
+        draw(batch, reg, x, y, dp);
     }
 
     /**
@@ -131,16 +117,27 @@ public final class Drawer {
      * Devuelve una TextureRegion según el número de gráfico
      * Es conveniente llamar a este método una sola vez, porque es un proceso algo lento.
      */
-    public static TextureRegion getTextureRegion(int numGrafico, Rect r) {
-        TextureAtlas atlas = Main.game.assets.getAM().get(getAtlasTexDir(), TextureAtlas.class);
-        // Lo busco en el atlas
-        TextureRegion reg = atlas.findRegion(Integer.toString(numGrafico));
+    public static TextureRegion getTextureRegion(int tipoGrafico, int numGrafico, Rect r) {
+        TextureAtlas atlas;
+        TextureRegion reg = null;
 
-        // Si no existe, lo busco entre los gráficos grandes
-        if (reg == null) {
-            String bigTexName = DIR_BIGTEXTURAS + "/" + numGrafico + ".png";
-            if (!Main.game.assets.getAM().isLoaded(bigTexName, Texture.class)) return null;
-            reg = new TextureRegion(Main.game.assets.getAM().get(bigTexName, Texture.class));
+        switch (tipoGrafico) {
+            case PRINCIPAL:
+                atlas = Main.game.assets.getAM().get(getAtlasTexDir(), TextureAtlas.class);
+                // Lo busco en el atlas
+                reg = atlas.findRegion(Integer.toString(numGrafico));
+
+                // Si no existe, lo busco entre los gráficos grandes
+                if (reg == null) {
+                    String bigTexName = getBigTexDir() + "/" + numGrafico + ".png";
+                    if (!Main.game.assets.getAM().isLoaded(bigTexName, Texture.class)) return null;
+                    reg = new TextureRegion(Main.game.assets.getAM().get(bigTexName, Texture.class));
+                }
+                break;
+            case FUENTE:
+                atlas = Main.game.assets.getAM().get(getAtlasFontTexDir(), TextureAtlas.class);
+                reg = atlas.findRegion(Integer.toString(numGrafico));
+                break;
         }
 
         // Verificamos si hay que buscar una región específica de la textura.
@@ -148,6 +145,37 @@ public final class Drawer {
             reg = new TextureRegion(reg, (int) r.getLeft(), (int) r.getTop(), (int) r.getWidth(), (int) r.getHeight());
 
         return reg;
+    }
+
+    public static void drawText(Batch batch, int numFont, String text, int x, int y) {
+        drawText(batch, numFont, text, x, y, dp);
+    }
+
+    public static void drawText(Batch batch, int numFont, String text, int x, int y, DrawParameter dp) {
+        Font[] fonts = Main.game.assets.getFonts().getFonts();
+        if (text.length() == 0) {
+            return;
+        }
+
+        if (numFont < 1 || numFont > fonts.length) {
+            return;
+        }
+
+        Char c;
+        int tempX = 0;
+        Font font = fonts[numFont - 1];
+
+
+        for (int i = 0; i < text.length(); i++) {
+            try {
+                c = font.getChars()[text.charAt(i)];
+            } catch (ArrayIndexOutOfBoundsException ex){
+                c = font.getChars()[63];
+            }
+
+            draw(batch, c.getTR(), tempX + x, y, dp);
+            tempX += (c.getWidth() + font.getOffset()) * dp.getScaleX();
+        }
     }
 
 }

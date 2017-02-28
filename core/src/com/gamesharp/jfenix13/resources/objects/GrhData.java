@@ -5,6 +5,8 @@ import com.badlogic.gdx.utils.Array;
 import com.gamesharp.jfenix13.general.Rect;
 import com.gamesharp.jfenix13.graphics.Drawer;
 
+import static com.gamesharp.jfenix13.graphics.Drawer.*;
+
 /**
  * Contiene la información de un solo GrhData
  *
@@ -70,6 +72,6 @@ public class GrhData {
     }
 
     public void updateTR() {
-        tr = Drawer.getTextureRegion(fileNum, rect);
+        tr = Drawer.getTextureRegion(PRINCIPAL, fileNum, rect);
     }
 }

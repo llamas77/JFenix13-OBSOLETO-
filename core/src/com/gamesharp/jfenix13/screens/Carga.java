@@ -40,12 +40,18 @@ public class Carga extends Screen {
         super.render(delta);
         float value;
 
+        //System.out.println(pb.getMaxValue());
         lb2.setText((int)(pb.getVisualValue() * 100) + " %");
         lb2.setFontScale(1.2f);
 
         if (pb.getVisualValue() == pb.getValue()) {
             if (pb.getValue() == pb.getMaxValue()) {
-                Main.game.assets.loadRemaining(); // Cargar todos los demas assets
+                /* Hacemos finishloading xq al trabajar con la progressbar redondea los valores
+                haciendo que muestre que terminó la carga cuando en realizad falta muy poco */
+                Main.game.assets.getAM().finishLoading();
+
+                // Cargamos todos los demás assets
+                Main.game.assets.loadRemaining();
                 Main.game.setScreen(new Principal());
             }
             value = Main.game.assets.loadNextAsset();
