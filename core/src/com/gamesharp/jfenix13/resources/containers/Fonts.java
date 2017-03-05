@@ -36,8 +36,8 @@ public class Fonts {
             fonts[i].setTex(dis.readInt());
             fonts[i].setOffset(dis.readInt());
             for (int j = 0; j < fonts[i].getChars().length; j++) {
-                fonts[i].getChars()[j].setLeft(dis.readInt());
-                fonts[i].getChars()[j].setTop(dis.readInt());
+                fonts[i].getChars()[j].setX1(dis.readInt());
+                fonts[i].getChars()[j].setY1(dis.readInt());
                 fonts[i].getChars()[j].setWidth(dis.readInt());
                 fonts[i].getChars()[j].setHeight(dis.readInt());
                 fonts[i].getChars()[j].updateTR(i);

@@ -26,8 +26,10 @@ public class Grh {
     }
 
     public Grh(int index, int started) {
-        GrhData grhData = Main.game.assets.getGrhs().getGrhData(index);
         if (index == 0) return;
+        GrhData grhData = Main.game.assets.getGrhs().getGrhData(index);
+
+        if (grhData == null) return;
         this.index = (short)index;
 
         if (started == 2) {

@@ -6,7 +6,9 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.gamesharp.jfenix13.general.Main;
 import com.gamesharp.jfenix13.resources.containers.*;
+import com.gamesharp.jfenix13.resources.objects.Map;
 
 import static com.gamesharp.jfenix13.general.FileNames.*;
 
@@ -15,6 +17,7 @@ import static com.gamesharp.jfenix13.general.FileNames.*;
  * am: para assets que libGDX sabe cargar (atlas, texturas, musica, sonidos, etc)
  * los demas corresponden a archivos de datos propios del juego.
  */
+
 public class AssetsHandler {
     private AssetManager am;
 
@@ -70,6 +73,7 @@ public class AssetsHandler {
     public void loadRemaining() {
         grhs = new Grhs();
         fonts = new Fonts();
+        Main.game.maps = new MapsHandler();
     }
 
     public Grhs getGrhs() {

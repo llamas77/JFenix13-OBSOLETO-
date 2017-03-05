@@ -1,9 +1,11 @@
 package com.gamesharp.jfenix13.graphics;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.gamesharp.jfenix13.general.Main;
 import com.gamesharp.jfenix13.general.Rect;
 import com.gamesharp.jfenix13.resources.objects.Char;
@@ -30,6 +32,28 @@ public final class Drawer {
 
     static {
         dp = new DrawParameter();
+    }
+
+    public static void pushScissors(Stage stage, int x, int y, int width, int height) {
+        pushScissors(stage, new Rectangle(x, y, width, height));
+    }
+
+    /**
+     * Hace que todo lo que se dibuje luego, se limite a un rectángulo determinado por rect.
+     */
+    public static void pushScissors(Stage stage, Rectangle rect) {
+        Rectangle scissors = new Rectangle();
+        ScissorStack.calculateScissors(stage.getCamera(), stage.getBatch().getTransformMatrix(), rect, scissors);
+        stage.getBatch().flush(); // para que lo que se dibuja antes se renderize antes de verse afectado por esto
+        ScissorStack.pushScissors(scissors);
+    }
+
+    /**
+     * Libera la limitación del rectángulo.
+     */
+    public static void popScissors(Stage stage) {
+        stage.getBatch().flush(); // para mandar a dibujar lo que está entre scissors
+        ScissorStack.popScissors();
     }
 
     /**
@@ -142,7 +166,7 @@ public final class Drawer {
 
         // Verificamos si hay que buscar una región específica de la textura.
         if (r != null)
-            reg = new TextureRegion(reg, (int) r.getLeft(), (int) r.getTop(), (int) r.getWidth(), (int) r.getHeight());
+            reg = new TextureRegion(reg, (int) r.getX1(), (int) r.getY1(), (int) r.getWidth(), (int) r.getHeight());
 
         return reg;
     }

@@ -15,6 +15,7 @@ public class Screen implements com.badlogic.gdx.Screen {
 
     public static final byte SCR_CARGA = 0;
     public static final byte SCR_PRINCIPAL = 1;
+    public static final byte SCR_TEST = 2;
 
     public static Screen[] screens;
 

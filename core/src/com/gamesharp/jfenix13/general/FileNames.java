@@ -5,6 +5,7 @@ public class FileNames {
     public static final String DIR_INITS = "inits";
     public static final String DIR_SKINS = "skins";
     public static final String DIR_ICON = "icon";
+    public static final String DIR_MAPS = "maps";
 
     public static String getIconDir() {
         return DIR_ICON + "/" + "ic_launcher.png";
@@ -38,4 +39,6 @@ public class FileNames {
     public static final String getSkinFlat() {
         return DIR_SKINS + "/flat/" + "skin.json";
     }
+
+
 }
