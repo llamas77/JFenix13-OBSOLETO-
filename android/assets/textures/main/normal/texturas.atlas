@@ -4182,6 +4182,13 @@ repeat: none
   orig: 320, 125
   offset: 0, 0
   index: -1
+138c
+  rotate: false
+  xy: 516, 896
+  size: 320, 125
+  orig: 320, 125
+  offset: 0, 0
+  index: -1
 3802
   rotate: false
   xy: 516, 896
@@ -5546,6 +5553,13 @@ repeat: none
   offset: 0, 0
   index: -1
 737
+  rotate: false
+  xy: 636, 58
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+737B
   rotate: false
   xy: 636, 58
   size: 256, 256

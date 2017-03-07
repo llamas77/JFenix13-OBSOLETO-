@@ -103,6 +103,7 @@ public final class Drawer {
             }
         }
 
+
         drawGrh(batch, grhData.getFrame((short)(grh.getFrame() - 1)), x, y, dp);
     }
 
@@ -120,6 +121,23 @@ public final class Drawer {
         GrhData grhDataCurrent = Main.game.assets.getGrhs().getGrhData(index);
         if (grhDataCurrent == null) return;
 
+        if (dp.isCenter()) {
+            //sp.setCenter(sp.getX(), sp.getY() + reg.getRegionHeight());
+
+            float tileWidth = grhDataCurrent.getTileWidth();
+            float tileHeight = grhDataCurrent.getTileHeight();
+
+            /*x = (int)x;
+            y = (int)y;*/
+
+            if (tileWidth != 1f)
+                x = x - (int)(tileWidth * WINDOWS_TILE_WIDTH / 2) - WINDOWS_TILE_WIDTH / 2;
+
+            if (tileHeight != 1f)
+                y = y - (int)(tileHeight * WINDOWS_TILE_HEIGHT) - WINDOWS_TILE_HEIGHT;
+
+        }
+
         draw(batch, grhDataCurrent.getTR(), x, y, dp);
     }
 
@@ -132,23 +150,6 @@ public final class Drawer {
      */
     public static void draw(Batch batch, TextureRegion reg, float x, float y, DrawParameter dp) {
         if (reg == null) return;
-
-        if (dp.isCenter()) {
-            //sp.setCenter(sp.getX(), sp.getY() + reg.getRegionHeight());
-
-            float tileWidth = (float)reg.getRegionWidth() / TILE_PIXEL_WIDTH;
-            float tileHeight = (float)reg.getRegionHeight() / TILE_PIXEL_HEIGHT;
-
-            x = (int)x;
-            y = (int)y;
-
-            if (tileWidth != 1f)
-                x = (int)(x -(tileWidth * WINDOWS_TILE_WIDTH / 2) - WINDOWS_TILE_WIDTH / 2);
-
-            if (tileHeight != 1f)
-                y = (int)(y -(tileHeight * WINDOWS_TILE_HEIGHT) - WINDOWS_TILE_HEIGHT);
-
-        }
 
         y = (int)containerRect.peek().getHeight() - y - reg.getRegionHeight();
 

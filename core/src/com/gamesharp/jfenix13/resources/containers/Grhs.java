@@ -2,6 +2,7 @@ package com.gamesharp.jfenix13.resources.containers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.gamesharp.jfenix13.general.Main;
 import com.gamesharp.jfenix13.resources.objects.GrhData;
 
 import java.io.DataInputStream;
@@ -52,6 +53,8 @@ public class Grhs {
                 grhData.getRect().setY1(leReadShort(dis));
                 grhData.getRect().setWidth(leReadShort(dis));
                 grhData.getRect().setHeight(leReadShort(dis));
+                grhData.setTileWidth(grhData.getRect().getWidth() / Main.TILE_PIXEL_WIDTH);
+                grhData.setTileHeight(grhData.getRect().getHeight() / Main.TILE_PIXEL_HEIGHT);
                 grhData.updateTR();
             }
             else {
@@ -60,9 +63,11 @@ public class Grhs {
                     if (frame > 0 && frame <= grhsData.length)
                         grhData.addFrame(frame);
                 }
-                grhData.setSpeed(leReadFloat(dis) / 27.5f);
+                grhData.setSpeed(leReadFloat(dis) / 34.67f);
                 grhData.getRect().setWidth(getGrhData(grhData.getFrame((short)0)).getRect().getWidth());
                 grhData.getRect().setHeight(getGrhData(grhData.getFrame((short)0)).getRect().getHeight());
+                grhData.setTileWidth(grhData.getRect().getWidth() / Main.TILE_PIXEL_WIDTH);
+                grhData.setTileHeight(grhData.getRect().getHeight() / Main.TILE_PIXEL_HEIGHT);
             }
         }
         dis.close();

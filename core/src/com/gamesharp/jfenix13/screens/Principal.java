@@ -48,7 +48,7 @@ public class Principal extends Screen {
     public void show() {
         super.show();
 
-        mainRect = new Rectangle(10, 140,
+        mainRect = new Rectangle(150, 3,
                                  WINDOWS_TILE_WIDTH * TILE_PIXEL_WIDTH, WINDOWS_TILE_HEIGHT * TILE_PIXEL_HEIGHT);
         screenTile = new Rect();
         screenBigTile = new Rect();
@@ -56,7 +56,7 @@ public class Principal extends Screen {
         mapa = Main.game.maps.getMapa();
 
         tp = new Touchpad(15, skin);
-        tp.setPosition(800, 50);
+        tp.setPosition(20, 50);
         tp.setSize(100, 100);
         stage.addActor(tp);
 
@@ -67,7 +67,7 @@ public class Principal extends Screen {
             asd.add(Integer.toString(i));
         }
 
-        sb.setPosition(800, 300);
+        sb.setPosition(20, 300);
         sb.setSize(70, 20);
 
         sb.setItems(asd);
@@ -83,7 +83,7 @@ public class Principal extends Screen {
             }
         });
 
-        tb.setPosition(800, 200);
+        tb.setPosition(20, 250);
         tb.setSize(100, 30);
 
         stage.addActor(tb);
@@ -97,6 +97,7 @@ public class Principal extends Screen {
         stage.getBatch().begin();
 
         Drawer.drawText(stage.getBatch(), 3, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 10);
+        Drawer.drawText(stage.getBatch(), 3, "(" + (int)userStats.getPos().getX() + ", " + (int)userStats.getPos().getY() + ")", 10, 30);
 
         Drawer.pushScissors(stage, mainRect);
 
@@ -106,15 +107,15 @@ public class Principal extends Screen {
                     setMoveWorld(ESTE);
                 }
 
-                if (tp.getKnobPercentY() > 0.7) {
+                else if (tp.getKnobPercentY() > 0.7) {
                     setMoveWorld(NORTE);
                 }
 
-                if (tp.getKnobPercentX() < -0.7) {
+                else if (tp.getKnobPercentX() < -0.7) {
                     setMoveWorld(OESTE);
                 }
 
-                if (tp.getKnobPercentY() < -0.7) {
+                else if (tp.getKnobPercentY() < -0.7) {
                     setMoveWorld(SUR);
                 }
             }
@@ -272,8 +273,6 @@ public class Principal extends Screen {
                 Drawer.drawGrh(stage.getBatch(), mapa.getTile(x - 1, y - 1).getCapa(0), tempPos.getX(), tempPos.getY(), dpCapa1);
                 if (mapa.getTile(x - 1, y - 1).getCapa(1) != null)
                     Drawer.drawGrh(stage.getBatch(), mapa.getTile(x - 1, y - 1).getCapa(1), tempPos.getX(), tempPos.getY(), dpCapa23);
-
-                //Drawer.drawText(stage.getBatch(), 3, "  " + x, tempPos.getX(), tempPos.getY());
 
                 screen.addY(1);
             }
