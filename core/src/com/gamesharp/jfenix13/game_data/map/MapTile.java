@@ -3,6 +3,11 @@ package com.gamesharp.jfenix13.game_data.map;
 import com.gamesharp.jfenix13.graphics.Grh;
 import com.gamesharp.jfenix13.graphics.Luz;
 
+/**
+ * Características de 1 tile del mapa.
+ *
+ *
+ */
 public class MapTile {
     private Grh[] capas;
     private int charIndex;

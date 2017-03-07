@@ -1,22 +1,39 @@
 package com.gamesharp.jfenix13.general;
 
 public class Position {
-    private int x;
-    private int y;
+    private float x;
+    private float y;
 
-    public int getX() {
+    public Position() {
+
+    }
+
+    public Position(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public float getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(float x) {
         this.x = x;
     }
 
-    public int getY() {
+    public void addX(float x) {
+        this.x += x;
+    }
+
+    public float getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void addY(float y) {
+        this.y += y;
+    }
+
+    public void setY(float y) {
         this.y = y;
     }
 }

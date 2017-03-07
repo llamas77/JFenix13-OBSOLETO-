@@ -17,6 +17,11 @@ public class Rect {
         setHeight(height);
     }
 
+
+    public boolean isPointIn(Position pos) {
+        return isPointIn(pos.getX(), pos.getY());
+    }
+
     /**
      * Verifica si un punto está dentro del rectángulo principal
      * @param x: coordenada en X
@@ -26,6 +31,8 @@ public class Rect {
     public boolean isPointIn(float x, float y) {
         return x >= x1 && x <= getX2() && y >= y1 && y <= getY2();
     }
+
+
 
 
     /**
@@ -60,12 +67,20 @@ public class Rect {
         this.y1 = y1;
     }
 
+    public void addY1(float addY) {
+        this.y1 += addY;
+    }
+
     public float getX1() {
         return x1;
     }
 
     public void setX1(float x1) {
         this.x1 = x1;
+    }
+
+    public void addX1(float addX) {
+        this.x1 += addX;
     }
 
     public float getWidth() {
@@ -76,12 +91,20 @@ public class Rect {
         this.width = width;
     }
 
+    public void addWidth(float addW) {
+        this.width += addW;
+    }
+
     public float getHeight() {
         return height;
     }
 
     public void setHeight(float height) {
         this.height = height;
+    }
+
+    public void addHeight(float addH) {
+        this.height += addH;
     }
 
     public float getY2() {
@@ -92,12 +115,20 @@ public class Rect {
         setHeight(bottom - getY1());
     }
 
+    public void addY2(float addY) {
+        addHeight(addY);
+    }
+
     public float getX2() {
         return getX1() + getWidth();
     }
 
     public void setX2(float right) {
         setWidth(right - getX1());
+    }
+
+    public void addX2(float addX) {
+        addWidth(addX);
     }
 
     public float getTileWidth() {

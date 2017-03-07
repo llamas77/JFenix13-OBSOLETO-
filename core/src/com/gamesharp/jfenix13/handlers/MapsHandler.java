@@ -13,4 +13,8 @@ public class MapsHandler {
     public void load(int index) {
         mapa = new Map(index);
     }
+
+    public Map getMapa() {
+        return mapa;
+    }
 }

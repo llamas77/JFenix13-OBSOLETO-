@@ -19,8 +19,14 @@ public class Util {
         return leFloat(dis.readFloat());
     }
 
-    public static byte leReadByte(DataInputStream dis) throws IOException {
-        return leByte(dis.readByte());
+    public static int leReadByte(DataInputStream dis) throws IOException {
+        int res = dis.readByte();
+        if (res >= 0 && res <= 127) {
+            return res;
+        }
+        else {
+            return 256 - res;
+        }
     }
 
     public static short leShort(short n) {

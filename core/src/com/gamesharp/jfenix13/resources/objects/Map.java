@@ -3,23 +3,35 @@ package com.gamesharp.jfenix13.resources.objects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.gamesharp.jfenix13.game_data.map.MapTile;
+import com.gamesharp.jfenix13.general.Rect;
 import com.gamesharp.jfenix13.general.Util;
 import com.gamesharp.jfenix13.graphics.Grh;
 import com.gamesharp.jfenix13.graphics.Luz;
-
 import java.io.DataInputStream;
 import java.io.IOException;
 
 import static com.gamesharp.jfenix13.general.FileNames.*;
+import static com.gamesharp.jfenix13.general.Main.*;
 
 public class Map {
 
-    public MapTile[][] tiles;
+    private MapTile[][] tiles;
     private int numero;
+    private Rect size;
 
     public Map(int numero) {
         this.numero = numero;
 
+        try {
+            load();
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void load(int numero) {
+        this.numero = numero;
         try {
             load();
         }
@@ -42,6 +54,12 @@ public class Map {
         int xMin = Util.leReadByte(dis);
         int yMax = Util.leReadByte(dis);
         int yMin = Util.leReadByte(dis);
+
+        size = new Rect();
+        size.setX1(xMin);
+        size.setY1(yMin);
+        size.setX2(xMax);
+        size.setY2(yMax);
 
         int cantXTiles = Math.abs(xMax - xMin) + 1;
         int cantYTiles = Math.abs(yMax - yMin) + 1;
@@ -111,5 +129,34 @@ public class Map {
         }
 
         dis.close();
+    }
+
+    public MapTile getTile(int x, int y) {
+        return tiles[x][y];
+    }
+
+    public int getNumero() {
+        return numero;
+    }
+
+    public Rect getSize() {
+        return size;
+    }
+
+    /**
+     * Obtiene un rectángulo interno al mapa, que corresponden a los límites de posición del usuario.
+     * Esto es para que lo último que se vea del mapa sean los límites, y no bordes negros.
+     */
+    public Rect getBorderRect() {
+        int halfWindowsTileWidth = WINDOWS_TILE_WIDTH / 2;
+        int halfWindowsTileHeight = WINDOWS_TILE_HEIGHT / 2;
+
+        Rect r = new Rect();
+        r.setX1(size.getX1() + halfWindowsTileWidth);
+        r.setY1(size.getY1() + halfWindowsTileHeight);
+        r.setX2(size.getX2() - halfWindowsTileWidth);
+        r.setY2(size.getY2() - halfWindowsTileHeight);
+
+        return r;
     }
 }

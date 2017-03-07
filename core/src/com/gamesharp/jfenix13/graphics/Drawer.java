@@ -6,35 +6,42 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.gamesharp.jfenix13.general.Main;
 import com.gamesharp.jfenix13.general.Rect;
 import com.gamesharp.jfenix13.resources.objects.Char;
 import com.gamesharp.jfenix13.resources.objects.Font;
 import com.gamesharp.jfenix13.resources.objects.GrhData;
 
+import java.util.Stack;
+
 import static com.gamesharp.jfenix13.graphics.Grh.*;
 import static com.gamesharp.jfenix13.general.FileNames.*;
+import static com.gamesharp.jfenix13.general.Main.*;
 
 import static com.badlogic.gdx.graphics.GL20.*;
 
 /**
  * Contiene lo referido a la manipulacion de texturas
  *
- * DEF_SEGS_PER_FRAME: segundos que dura cada frame si no se lo especifica
  * dp: es un objeto que contiene los parametros por defecto para dibujar.
+ * containerRect: pila con datos del rectángulo del contenedor actual, para dibujar pasando una posición relativa.
  */
 public final class Drawer {
     public static final int PRINCIPAL = 0;
     public static final int FUENTE = 1;
 
 
+    public static Stack<Rectangle> containerRect;
     private static DrawParameter dp;
 
     static {
         dp = new DrawParameter();
+        containerRect = new Stack();
+        containerRect.push(new Rectangle(0, 0, SCR_WIDTH, SCR_HEIGHT));
     }
 
-    public static void pushScissors(Stage stage, int x, int y, int width, int height) {
+    public static void pushScissors(Stage stage, float x, float y, float width, float height) {
         pushScissors(stage, new Rectangle(x, y, width, height));
     }
 
@@ -42,10 +49,19 @@ public final class Drawer {
      * Hace que todo lo que se dibuje luego, se limite a un rectángulo determinado por rect.
      */
     public static void pushScissors(Stage stage, Rectangle rect) {
+        Rectangle rect2 = new Rectangle();
+        rect2.setX(rect.getX());
+        rect2.setY(containerRect.peek().getHeight() - rect.getY() - rect.getHeight());
+        rect2.setWidth(rect.getWidth());
+        rect2.setHeight(rect.getHeight());
+
         Rectangle scissors = new Rectangle();
-        ScissorStack.calculateScissors(stage.getCamera(), stage.getBatch().getTransformMatrix(), rect, scissors);
+        Viewport vp = stage.getViewport();
+        ScissorStack.calculateScissors(stage.getCamera(), vp.getScreenX(), vp.getScreenY(),
+                vp.getScreenWidth(), vp.getScreenHeight(), stage.getBatch().getTransformMatrix(), rect2, scissors);
         stage.getBatch().flush(); // para que lo que se dibuja antes se renderize antes de verse afectado por esto
         ScissorStack.pushScissors(scissors);
+        containerRect.push(rect2);
     }
 
     /**
@@ -54,24 +70,26 @@ public final class Drawer {
     public static void popScissors(Stage stage) {
         stage.getBatch().flush(); // para mandar a dibujar lo que está entre scissors
         ScissorStack.popScissors();
+        containerRect.pop();
     }
 
     /**
      * Dibuja un Grh sin especificarle más nada
      */
-    public static void drawGrh(Batch batch, Grh grh, int x, int y) {
+    public static void drawGrh(Batch batch, Grh grh, float x, float y) {
         drawGrh(batch, grh, x, y, dp);
     }
 
     /**
      * Dibuja un Grh especificandole una serie de parámetros
      */
-    public static void drawGrh(Batch batch, Grh grh, int x, int y, DrawParameter dp) {
+    public static void drawGrh(Batch batch, Grh grh, float x, float y, DrawParameter dp) {
         GrhData grhData = Main.game.assets.getGrhs().getGrhData(grh.getIndex());
+        if (grhData == null) return;
 
         if (dp.isAnimated()) {
             if (grh.getStarted() == 1) {
-                grh.setFrame(grh.getFrame() + (Gdx.graphics.getDeltaTime() * grhData.getCantFrames() / grh.getSpeed()));
+                grh.setFrame(grh.getFrame() + (getDelta() * grhData.getCantFrames() / grh.getSpeed()));
                 if (grh.getFrame() >= grhData.getCantFrames() + 1) {
                     grh.setFrame(grh.getFrame() % grhData.getCantFrames());
 
@@ -91,28 +109,51 @@ public final class Drawer {
     /**
      * Dibuja un Grh especificandole su Index, sin ningún otro parámetro.
      */
-    public static void drawGrh(Batch batch, int index, int x, int y) {
+    public static void drawGrh(Batch batch, int index, float x, float y) {
         drawGrh(batch, index, x, y, dp);
     }
 
     /**
      * Dibuja un Grh especificándole su Index y una serie de parámetros.
      */
-    public static void drawGrh(Batch batch, int index, int x, int y, DrawParameter dp) {
+    public static void drawGrh(Batch batch, int index, float x, float y, DrawParameter dp) {
         GrhData grhDataCurrent = Main.game.assets.getGrhs().getGrhData(index);
+        if (grhDataCurrent == null) return;
 
         draw(batch, grhDataCurrent.getTR(), x, y, dp);
     }
 
-    public static void draw(Batch batch, TextureRegion reg, int x, int y) {
+    public static void draw(Batch batch, TextureRegion reg, float x, float y) {
         draw(batch, reg, x, y, dp);
     }
 
     /**
      * Dibuja una región de textura en donde
      */
-    public static void draw(Batch batch, TextureRegion reg, int x, int y, DrawParameter dp) {
+    public static void draw(Batch batch, TextureRegion reg, float x, float y, DrawParameter dp) {
         if (reg == null) return;
+
+        if (dp.isCenter()) {
+            //sp.setCenter(sp.getX(), sp.getY() + reg.getRegionHeight());
+
+            float tileWidth = (float)reg.getRegionWidth() / TILE_PIXEL_WIDTH;
+            float tileHeight = (float)reg.getRegionHeight() / TILE_PIXEL_HEIGHT;
+
+            x = (int)x;
+            y = (int)y;
+
+            if (tileWidth != 1f)
+                x = (int)(x -(tileWidth * WINDOWS_TILE_WIDTH / 2) - WINDOWS_TILE_WIDTH / 2);
+
+            if (tileHeight != 1f)
+                y = (int)(y -(tileHeight * WINDOWS_TILE_HEIGHT) - WINDOWS_TILE_HEIGHT);
+
+        }
+
+        y = (int)containerRect.peek().getHeight() - y - reg.getRegionHeight();
+
+        x += containerRect.peek().getX();
+        y += containerRect.peek().getY();
 
         Sprite sp = new Sprite(reg);
 
@@ -123,9 +164,6 @@ public final class Drawer {
         sp.setPosition(x, y);
         sp.rotate(dp.getRotation());
         sp.flip(dp.isFlipX(), dp.isFlipY());
-
-        if (dp.isCenter())
-            sp.setCenter(sp.getX(), sp.getY());
 
 
         if (dp.isBlend())
@@ -171,11 +209,11 @@ public final class Drawer {
         return reg;
     }
 
-    public static void drawText(Batch batch, int numFont, String text, int x, int y) {
+    public static void drawText(Batch batch, int numFont, String text, float x, float y) {
         drawText(batch, numFont, text, x, y, dp);
     }
 
-    public static void drawText(Batch batch, int numFont, String text, int x, int y, DrawParameter dp) {
+    public static void drawText(Batch batch, int numFont, String text, float x, float y, DrawParameter dp) {
         Font[] fonts = Main.game.assets.getFonts().getFonts();
         if (text.length() == 0) {
             return;
@@ -202,4 +240,11 @@ public final class Drawer {
         }
     }
 
+    /**
+     * Obtiene el tiempo transcurrido entre dos frames y se multiplica por una constante
+     * Se usa para calcular velocidades sin depender de los FPS.
+     */
+    public static float getDelta() {
+        return Gdx.graphics.getDeltaTime() * BASE_SPEED;
+    }
 }

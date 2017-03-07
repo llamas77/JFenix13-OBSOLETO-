@@ -2,6 +2,9 @@ package com.gamesharp.jfenix13.graphics;
 
 import com.badlogic.gdx.graphics.Color;
 
+/**
+ * Contiene las características de una luz
+ */
 public class Luz {
     private Color color;
     private int rango;

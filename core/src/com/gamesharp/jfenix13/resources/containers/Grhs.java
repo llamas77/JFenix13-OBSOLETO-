@@ -60,7 +60,7 @@ public class Grhs {
                     if (frame > 0 && frame <= grhsData.length)
                         grhData.addFrame(frame);
                 }
-                grhData.setSpeed(leReadFloat(dis) / 550);
+                grhData.setSpeed(leReadFloat(dis) / 27.5f);
                 grhData.getRect().setWidth(getGrhData(grhData.getFrame((short)0)).getRect().getWidth());
                 grhData.getRect().setHeight(getGrhData(grhData.getFrame((short)0)).getRect().getHeight());
             }
@@ -69,7 +69,7 @@ public class Grhs {
     }
 
     public GrhData getGrhData(int index) {
-        if (index - 1 >= grhsData.length) return null;
+        if (index - 1 < 0 || index - 1 >= grhsData.length) return null;
         return grhsData[index - 1];
     }
 
