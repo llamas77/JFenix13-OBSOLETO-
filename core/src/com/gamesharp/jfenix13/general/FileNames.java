@@ -2,6 +2,7 @@ package com.gamesharp.jfenix13.general;
 
 public class FileNames {
     public static final String DIR_TEXTURAS = "textures";
+    public static final String DIR_GUI = "gui";
     public static final String DIR_INITS = "inits";
     public static final String DIR_SKINS = "skins";
     public static final String DIR_ICON = "icon";
@@ -34,6 +35,10 @@ public class FileNames {
 
     public static String getAtlasFontTexDir() {
         return DIR_TEXTURAS + "/fonts/" + "fuentes.atlas";
+    }
+
+    public static String getAtlasGuiDir() {
+        return DIR_GUI + "/gui.atlas";
     }
 
     public static final String getSkinFlat() {

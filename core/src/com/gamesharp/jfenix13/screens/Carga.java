@@ -10,7 +10,7 @@ public class Carga extends Screen {
     Label lb2;
 
     public Carga() {
-        id = SCR_CARGA;
+        super(SCR_CARGA);
     }
 
     @Override
@@ -38,6 +38,8 @@ public class Carga extends Screen {
     @Override
     public void render(float delta) {
         super.render(delta);
+        stage.draw();
+
         float value;
 
         //System.out.println(pb.getMaxValue());

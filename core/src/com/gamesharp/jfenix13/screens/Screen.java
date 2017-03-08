@@ -2,7 +2,9 @@ package com.gamesharp.jfenix13.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.gamesharp.jfenix13.general.Main;
@@ -29,10 +31,19 @@ public class Screen implements com.badlogic.gdx.Screen {
     protected Stage stage;
     protected float width;
     protected float height;
+    private Image background;
 
 
-    public Screen() {
+    public Screen(byte id) {
+        this(id, null);
+    }
 
+    public Screen(byte id, String background) {
+        this.id = id;
+        TextureAtlas atlas = Main.game.assets.getAM().get(getAtlasGuiDir(), TextureAtlas.class);
+        this.background = null;
+        if (background != null)
+            this.background = new Image(atlas.findRegion("scr_" + background));
     }
 
     @Override
@@ -41,6 +52,12 @@ public class Screen implements com.badlogic.gdx.Screen {
         stage = new Stage(new FitViewport(SCR_WIDTH, SCR_HEIGHT));
         width = stage.getWidth();
         height = stage.getHeight();
+
+        if (background != null) {
+            background.setPosition((width - background.getWidth()) / 2, (height - background.getHeight()) / 2);
+            stage.addActor(background);
+        }
+
         Gdx.input.setInputProcessor(stage);
         screens[id] = this;
         //stage.setDebugAll(true);
@@ -53,7 +70,6 @@ public class Screen implements com.badlogic.gdx.Screen {
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.draw();
     }
 
     @Override
@@ -80,4 +96,6 @@ public class Screen implements com.badlogic.gdx.Screen {
     public void dispose() {
         stage.dispose();
     }
+
+
 }

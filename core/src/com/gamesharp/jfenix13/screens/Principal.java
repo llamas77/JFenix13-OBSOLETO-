@@ -25,14 +25,18 @@ import static com.gamesharp.jfenix13.general.Main.*;
  * Pantalla principal del juego
  *
  * mainRect: rectángulo que hace referencia a la zona de juego (donde se ve el mapa y los personajes, etc).
- * screenTile: indica los tiles del mapa correspondientes a los límites de la pantalla
- * screenBufTile: indica los límites de dibujado según los tiles de buffer
+ * screenTile: rectángulo con las posiciones del mundo que se visualizan (para capas 1 y 2)
+ * screenBigTile: lo mismo que screenTile pero más grande (para dibujar incluso donde no se ve: para capa 3, etc).
+ * userStats: características del usuario para mostrar en pantalla
+ * mapa: el mapa que está cargado.
  */
 public class Principal extends Screen {
 
-    private Touchpad tp;
-    private SelectBox<String> sb;
-    private TextButton tb;
+    private TextButton tbCerrar;
+    private Touchpad pad;
+    private SelectBox<String> sbMapas;
+    private TextButton tbCargar;
+
 
     private Rectangle mainRect;
     private Rect screenTile;
@@ -41,95 +45,113 @@ public class Principal extends Screen {
     private Map mapa;
 
     public Principal() {
-        this.id = SCR_PRINCIPAL;
+        super(SCR_PRINCIPAL, "principal");
     }
 
     @Override
     public void show() {
         super.show();
 
-        mainRect = new Rectangle(150, 3,
-                                 WINDOWS_TILE_WIDTH * TILE_PIXEL_WIDTH, WINDOWS_TILE_HEIGHT * TILE_PIXEL_HEIGHT);
-        screenTile = new Rect();
-        screenBigTile = new Rect();
-        userStats = Main.game.userStats;
-        mapa = Main.game.maps.getMapa();
-
-        tp = new Touchpad(15, skin);
-        tp.setPosition(20, 50);
-        tp.setSize(100, 100);
-        stage.addActor(tp);
-
-        sb = new SelectBox(skin);
-
-        Array<String> asd = new Array();
-        for (int i = 1; i <= 204; i++) {
-            asd.add(Integer.toString(i));
-        }
-
-        sb.setPosition(20, 300);
-        sb.setSize(70, 20);
-
-        sb.setItems(asd);
-        stage.addActor(sb);
-
-        tb = new TextButton("Cargar", skin);
-        tb.addListener(new DragListener() {
+        // Boton para cerrar el juego
+        tbCerrar = new TextButton("X", skin);
+        tbCerrar.addListener(new DragListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                mapa.load(sb.getSelectedIndex() + 1);
+                Gdx.app.exit();
 
                 return super.touchDown(event, x, y, pointer, button);
             }
         });
+        tbCerrar.setPosition(983, 730);
+        tbCerrar.setSize(25, 22);
+        stage.addActor(tbCerrar);
 
-        tb.setPosition(20, 250);
-        tb.setSize(100, 30);
 
-        stage.addActor(tb);
+        // Touchpad para mover el mundo
+        pad = new Touchpad(15, skin);
+        pad.setPosition(20, 77);
+        pad.setSize(100, 100);
+        stage.addActor(pad);
 
+
+        // SelectBox para seleccionar un mapa
+        sbMapas = new SelectBox(skin);
+        Array<String> items = new Array();
+        for (int i = 1; i <= 204; i++) {
+            items.add(Integer.toString(i));
+        }
+        sbMapas.setPosition(660, 721);
+        sbMapas.setSize(70, 20);
+        sbMapas.setItems(items);
+        stage.addActor(sbMapas);
+
+
+        // Boton para cargar un mapa
+        tbCargar = new TextButton("Cargar", skin);
+        tbCargar.addListener(new DragListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                mapa.load(sbMapas.getSelectedIndex() + 1);
+
+                return super.touchDown(event, x, y, pointer, button);
+            }
+        });
+        tbCargar.setPosition(631, 676);
+        tbCargar.setSize(100, 30);
+        stage.addActor(tbCargar);
+
+
+        // Configuraciónes del mundo
+        mainRect = new Rectangle(15, 150,
+                WINDOWS_TILE_WIDTH * TILE_PIXEL_WIDTH, WINDOWS_TILE_HEIGHT * TILE_PIXEL_HEIGHT);
+        screenTile = new Rect();
+        screenBigTile = new Rect();
+        userStats = Main.game.userStats;
+        mapa = Main.game.maps.getMapa();
     }
+
 
     @Override
     public void render(float delta) {
         super.render(delta);
 
         stage.getBatch().begin();
+            Drawer.pushScissors(stage, mainRect);
 
-        Drawer.drawText(stage.getBatch(), 3, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, 10);
-        Drawer.drawText(stage.getBatch(), 3, "(" + (int)userStats.getPos().getX() + ", " + (int)userStats.getPos().getY() + ")", 10, 30);
+                if (!userStats.isMoving()) {
+                    if (pad.getKnobPercentX() > 0f || pad.getKnobPercentY() > 0f) {
+                        if (pad.getKnobPercentX() > 0.7) {
+                            setMoveWorld(ESTE);
+                        }
 
-        Drawer.pushScissors(stage, mainRect);
+                        else if (pad.getKnobPercentY() > 0.7) {
+                            setMoveWorld(NORTE);
+                        }
 
-        if (!userStats.isMoving()) {
-            if (tp.getKnobPercentX() > 0f || tp.getKnobPercentY() > 0f) {
-                if (tp.getKnobPercentX() > 0.7) {
-                    setMoveWorld(ESTE);
+                        else if (pad.getKnobPercentX() < -0.7) {
+                            setMoveWorld(OESTE);
+                        }
+
+                        else if (pad.getKnobPercentY() < -0.7) {
+                            setMoveWorld(SUR);
+                        }
+                    }
                 }
 
-                else if (tp.getKnobPercentY() > 0.7) {
-                    setMoveWorld(NORTE);
-                }
+                moveWorld();
+                renderWorld();
 
-                else if (tp.getKnobPercentX() < -0.7) {
-                    setMoveWorld(OESTE);
-                }
-
-                else if (tp.getKnobPercentY() < -0.7) {
-                    setMoveWorld(SUR);
-                }
-            }
-        }
-
-        moveWorld();
-
-
-        renderWorld();
-
-        Drawer.popScissors(stage);
-
-
+            Drawer.popScissors(stage);
         stage.getBatch().end();
+
+        stage.draw();
+
+        stage.getBatch().begin();
+            Drawer.drawText(stage.getBatch(), 2, "FPS: " + Gdx.graphics.getFramesPerSecond(), 858, 20);
+            Drawer.drawText(stage.getBatch(), 2, "X: " + (int)userStats.getPos().getX() +
+                            "  -  Y: " + (int)userStats.getPos().getY(), 560, 724);
+        stage.getBatch().end();
+
     }
 
 

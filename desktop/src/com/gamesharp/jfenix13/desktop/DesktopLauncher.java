@@ -10,14 +10,21 @@ import static com.gamesharp.jfenix13.general.Main.*;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
+		System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
+
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.fullscreen = false;
+		config.fullscreen = true;
 		config.width = SCR_WIDTH;
+		config.resizable = false;
 		config.height = SCR_HEIGHT;
-		config.vSyncEnabled = false;
+		config.addIcon(getIconDir(), FileType.Internal);
+
+		/*config.vSyncEnabled = false;
 		config.foregroundFPS = 0;
 		config.backgroundFPS = 0;
-		config.addIcon(getIconDir(), FileType.Internal);
+		*/
+
+
 		new LwjglApplication(new Main(), config);
 	}
 }

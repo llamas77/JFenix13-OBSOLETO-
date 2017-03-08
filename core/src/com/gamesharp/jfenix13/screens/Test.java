@@ -14,7 +14,7 @@ public class Test extends Screen {
     TextButton tbCerrar;
 
     public Test() {
-        this.id = SCR_TEST;
+        super(SCR_TEST);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class Test extends Screen {
         //w.addActor(cb);
 
         SelectBox<String> sb = new SelectBox(skin);
-        sb.setItems("Mago", "Arquero", "Clérigo", "Asesino", "Ñoqui", "Pe?{E¿'0", "ASD", "Cat}an");
+        sb.setItems("1", "2");
         sb.setWidth(300);
 
 
@@ -100,5 +100,6 @@ public class Test extends Screen {
 
         stage.getBatch().end();
 
+        stage.draw();
     }
 }

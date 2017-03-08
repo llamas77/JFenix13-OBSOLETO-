@@ -27,7 +27,7 @@ public class AssetsHandler {
     public AssetsHandler() {
         am = new AssetManager();
         preloadAM();
-        am.finishLoadingAsset(getSkinFlat());
+        am.finishLoadingAsset(getAtlasGuiDir());
     }
 
     public AssetManager getAM() {
@@ -42,6 +42,9 @@ public class AssetsHandler {
 
         // Skin de la GUI
         am.load(getSkinFlat(), Skin.class);
+
+        // Atlas de la GUI del juego
+        am.load(getAtlasGuiDir(), TextureAtlas.class);
 
         // Atlas de texturas
         am.load(getAtlasTexDir(), TextureAtlas.class);
