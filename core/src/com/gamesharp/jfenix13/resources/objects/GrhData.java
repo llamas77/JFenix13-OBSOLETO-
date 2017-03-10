@@ -23,8 +23,6 @@ public class GrhData {
     private Array<Short> frames;
     private float speed;
     private TextureRegion tr;
-    private float tileWidth;
-    private float tileHeight;
 
     public GrhData() {
         frames = new Array();
@@ -77,19 +75,4 @@ public class GrhData {
         tr = Drawer.getTextureRegion(PRINCIPAL, fileNum, rect);
     }
 
-    public float getTileWidth() {
-        return tileWidth;
-    }
-
-    public void setTileWidth(float tileWidth) {
-        this.tileWidth = tileWidth;
-    }
-
-    public float getTileHeight() {
-        return tileHeight;
-    }
-
-    public void setTileHeight(float tileHeight) {
-        this.tileHeight = tileHeight;
-    }
 }

@@ -49,19 +49,13 @@ public final class Drawer {
      * Hace que todo lo que se dibuje luego, se limite a un rectángulo determinado por rect.
      */
     public static void pushScissors(Stage stage, Rectangle rect) {
-        Rectangle rect2 = new Rectangle();
-        rect2.setX(rect.getX());
-        rect2.setY(containerRect.peek().getHeight() - rect.getY() - rect.getHeight());
-        rect2.setWidth(rect.getWidth());
-        rect2.setHeight(rect.getHeight());
-
         Rectangle scissors = new Rectangle();
         Viewport vp = stage.getViewport();
         ScissorStack.calculateScissors(stage.getCamera(), vp.getScreenX(), vp.getScreenY(),
-                vp.getScreenWidth(), vp.getScreenHeight(), stage.getBatch().getTransformMatrix(), rect2, scissors);
+                vp.getScreenWidth(), vp.getScreenHeight(), stage.getBatch().getTransformMatrix(), rect, scissors);
         stage.getBatch().flush(); // para que lo que se dibuja antes se renderize antes de verse afectado por esto
         ScissorStack.pushScissors(scissors);
-        containerRect.push(rect2);
+        containerRect.push(rect);
     }
 
     /**
@@ -121,23 +115,6 @@ public final class Drawer {
         GrhData grhDataCurrent = Main.game.assets.getGrhs().getGrhData(index);
         if (grhDataCurrent == null) return;
 
-        if (dp.isCenter()) {
-            //sp.setCenter(sp.getX(), sp.getY() + reg.getRegionHeight());
-
-            float tileWidth = grhDataCurrent.getTileWidth();
-            float tileHeight = grhDataCurrent.getTileHeight();
-
-            /*x = (int)x;
-            y = (int)y;*/
-
-            if (tileWidth != 1f)
-                x = x - (int)(tileWidth * WINDOWS_TILE_WIDTH / 2) - WINDOWS_TILE_WIDTH / 2;
-
-            if (tileHeight != 1f)
-                y = y - (int)(tileHeight * WINDOWS_TILE_HEIGHT) - WINDOWS_TILE_HEIGHT;
-
-        }
-
         draw(batch, grhDataCurrent.getTR(), x, y, dp);
     }
 
@@ -150,6 +127,17 @@ public final class Drawer {
      */
     public static void draw(Batch batch, TextureRegion reg, float x, float y, DrawParameter dp) {
         if (reg == null) return;
+
+        if (dp.isCenter()) {
+            float tileWidth = reg.getRegionWidth() / TILE_PIXEL_WIDTH;
+            float tileHeight = reg.getRegionHeight() / TILE_PIXEL_HEIGHT;
+
+            if (tileWidth != 1f)
+                x += - reg.getRegionWidth() / 2 + TILE_PIXEL_WIDTH / 2;
+
+            if (tileHeight != 1f)
+                y += - reg.getRegionHeight() + TILE_PIXEL_HEIGHT;
+        }
 
         y = (int)containerRect.peek().getHeight() - y - reg.getRegionHeight();
 

@@ -3,6 +3,7 @@ package com.gamesharp.jfenix13.resources.objects;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.gamesharp.jfenix13.game_data.map.MapTile;
+import com.gamesharp.jfenix13.general.Position;
 import com.gamesharp.jfenix13.general.Rect;
 import com.gamesharp.jfenix13.general.Util;
 import com.gamesharp.jfenix13.graphics.Grh;
@@ -158,5 +159,31 @@ public class Map {
         r.setY2(size.getY2() - halfWindowsTileHeight);
 
         return r;
+    }
+
+
+    /**
+     * Indica si es posible moverse hacia una dirección estando en una posición determinada.
+     */
+    public boolean isLegalPos(Position pos, int dir) {
+        return isLegalPos(pos.getSuma(Position.dirToPos(dir)));
+    }
+
+    public boolean isLegalPos(float x, float y) {
+        return isLegalPos(new Position(x, y));
+    }
+
+    /**
+     * Indica si es posible moverse a un tile final (pos)
+     */
+    public boolean isLegalPos(Position pos) {
+        MapTile tile = tiles[(int)pos.getX() - 1][(int)pos.getY() - 1];
+
+        // Verificamos que no se pase ciertos límites (porque sino intentaría renderizar tiles que no existen)
+        if (!getBorderRect().isPointIn(pos)) return false;
+
+        if (tile.isBlocked()) return false;
+
+        return true;
     }
 }

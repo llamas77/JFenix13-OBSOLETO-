@@ -53,8 +53,6 @@ public class Grhs {
                 grhData.getRect().setY1(leReadShort(dis));
                 grhData.getRect().setWidth(leReadShort(dis));
                 grhData.getRect().setHeight(leReadShort(dis));
-                grhData.setTileWidth(grhData.getRect().getWidth() / Main.TILE_PIXEL_WIDTH);
-                grhData.setTileHeight(grhData.getRect().getHeight() / Main.TILE_PIXEL_HEIGHT);
                 grhData.updateTR();
             }
             else {
@@ -66,8 +64,6 @@ public class Grhs {
                 grhData.setSpeed(leReadFloat(dis) / 34.67f);
                 grhData.getRect().setWidth(getGrhData(grhData.getFrame((short)0)).getRect().getWidth());
                 grhData.getRect().setHeight(getGrhData(grhData.getFrame((short)0)).getRect().getHeight());
-                grhData.setTileWidth(grhData.getRect().getWidth() / Main.TILE_PIXEL_WIDTH);
-                grhData.setTileHeight(grhData.getRect().getHeight() / Main.TILE_PIXEL_HEIGHT);
             }
         }
         dis.close();
