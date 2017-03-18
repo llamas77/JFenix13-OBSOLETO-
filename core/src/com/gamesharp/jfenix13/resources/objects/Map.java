@@ -2,12 +2,13 @@ package com.gamesharp.jfenix13.resources.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.gamesharp.jfenix13.game_data.map.MapTile;
 import com.gamesharp.jfenix13.general.Position;
 import com.gamesharp.jfenix13.general.Rect;
 import com.gamesharp.jfenix13.general.Util;
 import com.gamesharp.jfenix13.graphics.Grh;
-import com.gamesharp.jfenix13.graphics.Luz;
+import com.gamesharp.jfenix13.graphics.Light;
 import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -113,13 +114,18 @@ public class Map {
                 int verde = Util.leReadByte(dis);
                 int azul = Util.leReadByte(dis);
 
-                Luz luz = new Luz();
-                luz.setColor(rojo, verde, azul, 255);
-                luz.setRango(Util.leReadByte(dis));
+                Light light = new Light();
+                light.setColor(rojo, verde, azul, 255);
+                light.setRango(Util.leReadByte(dis));
 
-                tiles[x][y].setLuz(luz);
+                tiles[x][y].setLight(light);
             }
         }
+
+        // DEBUG
+        tiles[49][49].setLight(new Light(new Color(1, 0, 0, 1), 1, 0.4f));
+        tiles[52][47].setLight(new Light(new Color(0, 0, 1, 1), 1, 0.4f));
+        // DEBUG
 
         if (cantParticulas > 0) {
             for (int i = 0; i < cantParticulas; i++) {

@@ -9,6 +9,7 @@ import static com.badlogic.gdx.graphics.GL20.*;
  *
  * color: color de cada vértice
  * alpha: cantidad de transparencia que luego se combina con el color.
+ * light: indica si brilla o no (si cambia el clima, esto no se ve afectado
  * center: indica si el sprite va centrado
  * animated: si es una animación, indica si se reproduce o no.
  * rotation: indica la inclinación. Se expresa en grados (va de 0f a 360f)
@@ -20,6 +21,7 @@ import static com.badlogic.gdx.graphics.GL20.*;
 public class DrawParameter {
     private Color[] color;
     private float[] alpha;
+    private boolean light;
     private boolean center;
     private boolean animated;
     private float rotation;
@@ -154,6 +156,14 @@ public class DrawParameter {
      */
     public float getVertAlpha(int vert) {
         return alpha[vert];
+    }
+
+    public boolean isLight() {
+        return light;
+    }
+
+    public void setLight(boolean light) {
+        this.light = light;
     }
 
     public boolean isCenter() {

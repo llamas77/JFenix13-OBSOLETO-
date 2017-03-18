@@ -46,16 +46,11 @@ public class AssetsHandler {
         // Atlas de la GUI del juego
         am.load(getAtlasGuiDir(), TextureAtlas.class);
 
-        // Atlas de texturas
-        am.load(getAtlasTexDir(), TextureAtlas.class);
+        // Atlas de texturas normales
+        am.load(getAtlasNormTexDir(), TextureAtlas.class);
 
-        // Texturas grandes que no entraron en el atlas
-        FileHandle[] files = Gdx.files.internal(getBigTexDir()).list();
-        for (FileHandle f : files) {
-            if (f.extension().toLowerCase().equals("png")) {
-                am.load(getBigTexDir() + "/" + f.name(), Texture.class);
-            }
-        }
+        // Atlas de texturas grandes
+        am.load(getAtlasBigTexDir(), TextureAtlas.class);
 
         am.load(getAtlasFontTexDir(), TextureAtlas.class);
     }

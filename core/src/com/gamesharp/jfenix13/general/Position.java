@@ -58,6 +58,14 @@ public class Position {
         addY(pos.getY());
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Position)
+            if (getX() == ((Position)obj).getX() && getY() == ((Position)obj).getY())
+                return true;
+        return false;
+    }
+
     /**
      * Obtiene una posición relativa según una dirección
      */

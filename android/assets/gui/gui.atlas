@@ -6,8 +6,8 @@ filter: Nearest,Nearest
 repeat: none
 scr_principal
   rotate: false
-  xy: 2, 2
-  size: 1020, 768
-  orig: 1020, 768
+  xy: 0, 0
+  size: 1024, 768
+  orig: 1024, 768
   offset: 0, 0
   index: -1

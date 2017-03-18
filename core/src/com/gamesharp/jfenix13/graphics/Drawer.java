@@ -1,6 +1,7 @@
 package com.gamesharp.jfenix13.graphics;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Rectangle;
@@ -26,6 +27,7 @@ import static com.badlogic.gdx.graphics.GL20.*;
  *
  * dp: es un objeto que contiene los parametros por defecto para dibujar.
  * containerRect: pila con datos del rectángulo del contenedor actual, para dibujar pasando una posición relativa.
+ * defColor: color del mundo por defecto
  */
 public final class Drawer {
     public static final int PRINCIPAL = 0;
@@ -34,9 +36,11 @@ public final class Drawer {
 
     public static Stack<Rectangle> containerRect;
     private static DrawParameter dp;
+    private static Color defColor;
 
     static {
         dp = new DrawParameter();
+        defColor = new Color(1, 1, 1, 1);
         containerRect = new Stack();
         containerRect.push(new Rectangle(0, 0, SCR_WIDTH, SCR_HEIGHT));
     }
@@ -146,7 +150,17 @@ public final class Drawer {
 
         Sprite sp = new Sprite(reg);
 
-        sp.setColors(dp.getColors());
+        // Que el color final dependa del color por default
+        Color[] c = dp.getColors();
+
+        if (dp.isLight())
+            sp.setColors(c);
+        else
+            for (int i = 0; i < c.length; i++)
+                sp.setVertColor(i, new Color(c[i].r * defColor.r, c[i].g * defColor.g, c[i].b * defColor.b,
+                        c[i].a * defColor.a));
+
+
         sp.setAlphas(dp.getAlphas());
 
         sp.setScale(dp.getScaleX(), dp.getScaleY());
@@ -174,25 +188,25 @@ public final class Drawer {
 
         switch (tipoGrafico) {
             case PRINCIPAL:
-                atlas = Main.game.assets.getAM().get(getAtlasTexDir(), TextureAtlas.class);
-                // Lo busco en el atlas
-                reg = atlas.findRegion(Integer.toString(numGrafico));
+                // Busca en gráficos normales
+                atlas = Main.game.assets.getAM().get(getAtlasNormTexDir(), TextureAtlas.class);
+                reg = atlas.findRegion("" + numGrafico);
 
-                // Si no existe, lo busco entre los gráficos grandes
+                // Si no existe, busca entre los gráficos grandes
                 if (reg == null) {
-                    String bigTexName = getBigTexDir() + "/" + numGrafico + ".png";
-                    if (!Main.game.assets.getAM().isLoaded(bigTexName, Texture.class)) return null;
-                    reg = new TextureRegion(Main.game.assets.getAM().get(bigTexName, Texture.class));
+                    atlas = Main.game.assets.getAM().get(getAtlasBigTexDir(), TextureAtlas.class);
+                    reg = atlas.findRegion("" + numGrafico);
                 }
                 break;
             case FUENTE:
                 atlas = Main.game.assets.getAM().get(getAtlasFontTexDir(), TextureAtlas.class);
-                reg = atlas.findRegion(Integer.toString(numGrafico));
+                reg = atlas.findRegion("" + numGrafico);
                 break;
         }
 
         // Verificamos si hay que buscar una región específica de la textura.
         if (r != null)
+            if (reg != null)
             reg = new TextureRegion(reg, (int) r.getX1(), (int) r.getY1(), (int) r.getWidth(), (int) r.getHeight());
 
         return reg;
@@ -235,5 +249,21 @@ public final class Drawer {
      */
     public static float getDelta() {
         return Gdx.graphics.getDeltaTime() * BASE_SPEED;
+    }
+
+    public static Color getDefColor() {
+        return defColor;
+    }
+
+    public static void setDefColor(int r, int g, int b, int a) {
+        setDefColor((float)r/255, (float)g/255, (float)b/255, (float)a/255);
+    }
+
+    public static void setDefColor(float r, float g, float b, float a) {
+        defColor.set(r, g, b, a);
+    }
+
+    public static void setDefColor(Color color) {
+        defColor = color;
     }
 }

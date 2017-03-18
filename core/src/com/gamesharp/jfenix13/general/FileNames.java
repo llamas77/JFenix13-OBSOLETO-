@@ -3,6 +3,7 @@ package com.gamesharp.jfenix13.general;
 public class FileNames {
     public static final String DIR_TEXTURAS = "textures";
     public static final String DIR_GUI = "gui";
+    public static final String DIR_SHADERS = "shaders";
     public static final String DIR_INITS = "inits";
     public static final String DIR_SKINS = "skins";
     public static final String DIR_ICON = "icon";
@@ -20,17 +21,16 @@ public class FileNames {
         return DIR_INITS + "/" + "fonts.ind";
     }
 
-
     public static String getMainTexDir() {
         return DIR_TEXTURAS + "/main";
     }
 
-    public static String getAtlasTexDir() {
-        return getMainTexDir() + "/normal/" + "texturas.atlas";
+    public static String getAtlasNormTexDir() {
+        return getMainTexDir() + "/" + "normal.atlas";
     }
 
-    public static String getBigTexDir() {
-        return getMainTexDir() + "/big";
+    public static String getAtlasBigTexDir() {
+        return getMainTexDir() + "/" + "big.atlas";
     }
 
     public static String getAtlasFontTexDir() {
@@ -45,5 +45,20 @@ public class FileNames {
         return DIR_SKINS + "/flat/" + "skin.json";
     }
 
+    public static final String getPassVSH() {
+        return DIR_SHADERS + "/" + "pass.vsh";
+    }
+
+    public static final String getShadowMapFSH() {
+        return DIR_SHADERS + "/" + "shadowMap.fsh";
+    }
+
+    public static final String getShadowRenderFSH() {
+        return DIR_SHADERS + "/" + "shadowRender.fsh";
+    }
+
+    public static final String getShadowCombineFSH() {
+        return DIR_SHADERS + "/" + "shadowCombine.fsh";
+    }
 
 }

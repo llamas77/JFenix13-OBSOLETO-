@@ -1,7 +1,7 @@
 package com.gamesharp.jfenix13.game_data.map;
 
 import com.gamesharp.jfenix13.graphics.Grh;
-import com.gamesharp.jfenix13.graphics.Luz;
+import com.gamesharp.jfenix13.graphics.Light;
 
 /**
  * Características de 1 tile del mapa.
@@ -16,12 +16,13 @@ public class MapTile {
 
     private boolean blocked;
     private int trigger;
-    private Luz luz;
+    private Light light;
     private int particula;
 
     public MapTile() {
         capas = new Grh[4];
         objeto = null;
+        light = null;
     }
 
     public Grh[] getCapas() {
@@ -80,12 +81,12 @@ public class MapTile {
         this.trigger = trigger;
     }
 
-    public Luz getLuz() {
-        return luz;
+    public Light getLight() {
+        return light;
     }
 
-    public void setLuz(Luz luz) {
-        this.luz = luz;
+    public void setLight(Light light) {
+        this.light = light;
     }
 
     public int getParticula() {

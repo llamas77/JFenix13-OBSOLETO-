@@ -2,6 +2,7 @@ package com.gamesharp.jfenix13.screens;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -13,6 +14,7 @@ import com.gamesharp.jfenix13.graphics.Drawer;
 import static com.gamesharp.jfenix13.general.Direccion.*;
 import static com.badlogic.gdx.Input.Keys.*;
 
+import static com.gamesharp.jfenix13.general.FileNames.*;
 import static com.gamesharp.jfenix13.general.Main.*;
 
 /**
@@ -81,6 +83,7 @@ public class Principal extends Screen {
         world = new World();
         world.setPosition(15, 74);
         stage.addActor(world);
+
     }
 
 
@@ -89,13 +92,15 @@ public class Principal extends Screen {
         super.render(delta);
 
         stage.getBatch().begin();
-            Drawer.pushScissors(stage, world.getRect());
 
-                checkKeys();
-                world.move();
-                world.render(stage);
+            Drawer.setDefColor(255, 255, 255, 255);
 
-            Drawer.popScissors(stage);
+            checkKeys();
+            world.move();
+            world.render(stage);
+
+            Drawer.setDefColor(255, 255, 255, 255);
+
         stage.getBatch().end();
 
         stage.draw();
@@ -107,7 +112,6 @@ public class Principal extends Screen {
         stage.getBatch().end();
 
     }
-
 
     /**
      * Mueve la pantalla según la entrada del teclado
