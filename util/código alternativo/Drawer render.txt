@@ -1,0 +1,124 @@
+    public void render(Stage stage) {
+        int x, y;
+        MapTile tile;
+        Position tempPos = new Position();
+        Position minOffset = new Position();
+        Position screen = new Position();
+
+        Array<DrawData> qCapa3 = new Array();
+        Array<DrawData> qCapa4 = new Array();
+
+
+        int halfWindowsTileWidth = WINDOWS_TILE_WIDTH / 2;
+        int halfWindowsTileHeight = WINDOWS_TILE_HEIGHT / 2;
+
+        screenTile.setX1(pos.getX() - addToPos.getX() - halfWindowsTileWidth);
+        screenTile.setY1(pos.getY() - addToPos.getY() - halfWindowsTileHeight);
+        screenTile.setX2(pos.getX() - addToPos.getX() + halfWindowsTileWidth);
+        screenTile.setY2(pos.getY() - addToPos.getY() + halfWindowsTileHeight);
+
+        screenBigTile.setX1(screenTile.getX1() - TILE_BUFFER_SIZE_X);
+        screenBigTile.setY1(screenTile.getY1() - TILE_BUFFER_SIZE_Y);
+        screenBigTile.setX2(screenTile.getX2() + TILE_BUFFER_SIZE_X);
+        screenBigTile.setY2(screenTile.getY2() + TILE_BUFFER_SIZE_Y);
+
+
+        // Asegurarse de que screenBigTile está siempre dentro del mapa
+        if (screenBigTile.getY1() < mapa.getSize().getY1()) {
+            minOffset.setY((int)(mapa.getSize().getY1() - screenBigTile.getY1()));
+            screenBigTile.setY1(mapa.getSize().getY1());
+        }
+        if (screenBigTile.getY2() > mapa.getSize().getY2()) {
+            screenBigTile.setY2(mapa.getSize().getY2());
+        }
+        if (screenBigTile.getX1() < mapa.getSize().getX1()) {
+            minOffset.setX((int)(mapa.getSize().getX1() - screenBigTile.getX1()));
+            screenBigTile.setX1(mapa.getSize().getX1());
+        }
+        if (screenBigTile.getX2() > mapa.getSize().getX2()) {
+            screenBigTile.setX2(mapa.getSize().getX2());
+        }
+
+
+        // En lo posible agrandar los bordes de renderizado a un tile para cada lado, para que se vea bien al moverse.
+        if (screenTile.getY1() > mapa.getSize().getY1()) {
+            screenTile.addY1(-1);
+            screenTile.addHeight(1);
+        }
+        else {
+            screenTile.setY1(1);
+            screen.setY(1);
+        }
+        if (screenTile.getY2() < mapa.getSize().getY2())
+            screenTile.addY2(1);
+
+        if (screenTile.getX1() > mapa.getSize().getX1()) {
+            screenTile.addX1(-1);
+            screenTile.addWidth(1);
+        }
+        else {
+            screenTile.setX1(1);
+            screen.setX(1);
+        }
+        if (screenTile.getX2() < mapa.getSize().getX2())
+            screenTile.addX2(1);
+
+
+        DrawParameter dpA = new DrawParameter();
+        dpA.setAnimated(true);
+
+        DrawParameter dpAC = new DrawParameter();
+        dpAC.setAnimated(true);
+        dpAC.setCenter(true);
+
+
+        screen.setX(minOffset.getX() - TILE_BUFFER_SIZE_X);
+        screen.setY(minOffset.getY() - TILE_BUFFER_SIZE_Y);
+
+
+        for (x = (int)screenBigTile.getX1(); x <= (int)screenBigTile.getX2(); x++) {
+            tempPos.setX(screen.getX() * TILE_PIXEL_WIDTH + offset.getX());
+            for (y = (int)screenBigTile.getY1(); y <= (int)screenBigTile.getY2(); y++) {
+                tempPos.setY(screen.getY() * TILE_PIXEL_HEIGHT + offset.getY());
+                tile = mapa.getTile(x - 1, y - 1);
+
+                if (screenTile.isPointIn(x, y)) {
+                    // Capa 1
+                    Drawer.drawGrh(stage.getBatch(), tile.getCapa(0), tempPos.getX(), tempPos.getY(), dpA);
+
+                    // Capa 2
+                    if (tile.getCapa(1) != null)
+                        Drawer.drawGrh(stage.getBatch(), tile.getCapa(1), tempPos.getX(), tempPos.getY(), dpAC);
+                }
+
+                Position thisPos = new Position(tempPos.getX(), tempPos.getY());
+                if (tile.getCapa(2) != null)
+                    qCapa3.add(new DrawData(tile, thisPos, T_CAPA3));
+
+                if (!techo) {
+                    if (tile.getCapa(3) != null)
+                        qCapa4.add(new DrawData(tile, thisPos));
+                }
+
+                screen.addY(1);
+            }
+            screen.addY(-y + screenBigTile.getY1());
+            screen.addX(1);
+        }
+
+        
+        for (DrawData dd : qCapa3) {
+            switch (dd.tipo) {
+                case T_CAPA3:
+                    Drawer.drawGrh(stage.getBatch(), dd.tile.getCapa(2), dd.pos.getX(), dd.pos.getY(), dpAC);
+                    break;
+            }
+        }
+
+        if (!techo) {
+            for (DrawData dd : qCapa4) {
+                Drawer.drawGrh(stage.getBatch(), dd.tile.getCapa(3), dd.pos.getX(), dd.pos.getY(), dpAC);
+            }
+        }
+
+    }
