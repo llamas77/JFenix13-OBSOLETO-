@@ -21,6 +21,7 @@ public class Screen implements com.badlogic.gdx.Screen {
 
     public static Screen[] screens;
 
+
     static {
         screens = new Screen[SCREENS];
     }

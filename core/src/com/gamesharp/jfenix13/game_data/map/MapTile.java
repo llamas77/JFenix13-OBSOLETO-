@@ -1,5 +1,6 @@
 package com.gamesharp.jfenix13.game_data.map;
 
+import com.badlogic.gdx.graphics.Color;
 import com.gamesharp.jfenix13.graphics.Grh;
 import com.gamesharp.jfenix13.graphics.Light;
 
@@ -18,11 +19,13 @@ public class MapTile {
     private int trigger;
     private Light light;
     private int particula;
+    private Color[] color;
 
     public MapTile() {
         capas = new Grh[4];
         objeto = null;
         light = null;
+        color = new Color[4];
     }
 
     public Grh[] getCapas() {
@@ -95,5 +98,13 @@ public class MapTile {
 
     public void setParticula(int particula) {
         this.particula = particula;
+    }
+
+    public Color[] getColors() {
+        return color;
+    }
+
+    public void setColors(Color[] color) {
+        this.color = color;
     }
 }

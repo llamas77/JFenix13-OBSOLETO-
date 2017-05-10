@@ -1,6 +1,8 @@
 package com.gamesharp.jfenix13.graphics;
 
 import com.badlogic.gdx.graphics.Color;
+import com.gamesharp.jfenix13.game_data.map.MapTile;
+import com.gamesharp.jfenix13.general.Rect;
 
 /**
  * Contiene las características de una luz

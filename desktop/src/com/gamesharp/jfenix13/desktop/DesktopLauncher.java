@@ -15,7 +15,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.fullscreen = false;
 		config.width = SCR_WIDTH;
-		config.resizable = false;
+		//config.resizable = false;
 		config.height = SCR_HEIGHT;
 		config.addIcon(getIconDir(), FileType.Internal);
 

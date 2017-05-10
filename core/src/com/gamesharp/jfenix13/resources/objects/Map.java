@@ -26,8 +26,7 @@ public class Map {
 
         try {
             load();
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
@@ -36,8 +35,7 @@ public class Map {
         this.numero = numero;
         try {
             load();
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
@@ -122,11 +120,6 @@ public class Map {
             }
         }
 
-        // DEBUG
-        tiles[49][49].setLight(new Light(new Color(1, 0, 0, 1), 1, 0.4f));
-        tiles[52][47].setLight(new Light(new Color(0, 0, 1, 1), 1, 0.4f));
-        // DEBUG
-
         if (cantParticulas > 0) {
             for (int i = 0; i < cantParticulas; i++) {
                 int x = Util.leReadByte(dis) - 1;
@@ -183,7 +176,7 @@ public class Map {
      * Indica si es posible moverse a un tile final (pos)
      */
     public boolean isLegalPos(Position pos) {
-        MapTile tile = tiles[(int)pos.getX() - 1][(int)pos.getY() - 1];
+        MapTile tile = tiles[(int) pos.getX() - 1][(int) pos.getY() - 1];
 
         // Verificamos que no se pase ciertos límites (porque sino intentaría renderizar tiles que no existen)
         if (!getBorderRect().isPointIn(pos)) return false;
@@ -192,4 +185,5 @@ public class Map {
 
         return true;
     }
+
 }

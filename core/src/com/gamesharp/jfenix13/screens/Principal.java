@@ -93,11 +93,13 @@ public class Principal extends Screen {
 
         stage.getBatch().begin();
 
-            Drawer.setDefColor(255, 255, 255, 255);
+            Drawer.setDefColor(150, 150, 150, 255);
 
+            Drawer.pushScissors(stage, world.getRect());
             checkKeys();
             world.move();
             world.render(stage);
+            Drawer.popScissors(stage);
 
             Drawer.setDefColor(255, 255, 255, 255);
 

@@ -1,34 +1,19 @@
 package com.gamesharp.jfenix13.game_data.general;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.Shader;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.gamesharp.jfenix13.game_data.map.MapTile;
 import com.gamesharp.jfenix13.general.Main;
 import com.gamesharp.jfenix13.general.Position;
 import com.gamesharp.jfenix13.general.Rect;
-import com.gamesharp.jfenix13.graphics.DrawData;
 import com.gamesharp.jfenix13.graphics.DrawParameter;
 import com.gamesharp.jfenix13.graphics.Drawer;
-import com.gamesharp.jfenix13.graphics.Light;
 import com.gamesharp.jfenix13.handlers.WorldHandler;
 import com.gamesharp.jfenix13.listeners.WorldListener;
 import com.gamesharp.jfenix13.resources.objects.Map;
 
 import static com.gamesharp.jfenix13.general.Main.*;
-import static com.gamesharp.jfenix13.general.FileNames.*;
-import static com.gamesharp.jfenix13.graphics.DrawData.*;
-import static com.badlogic.gdx.graphics.GL20.*;
 
 /**
  * Mundo donde se muestra y se interactúa con una parte del mapa, personajes, npcs, etc.
@@ -57,16 +42,6 @@ public class World extends Actor {
 
     private WorldHandler h;
 
-    private ShaderProgram shadowMapSH, shadowRenderSH, shadowCombineSH;
-    private FrameBuffer shadowMapFBO, occludersFBO, tercerFBO;
-    private Texture shadowMap1D;
-    private Texture occluders;
-    private TextureRegion tercer;
-
-    // ONLY DEBUG
-    private int lightSize;
-
-
     public World() {
         setSize(WINDOWS_TILE_WIDTH * TILE_PIXEL_WIDTH, WINDOWS_TILE_HEIGHT * TILE_PIXEL_HEIGHT);
 
@@ -80,28 +55,6 @@ public class World extends Actor {
         screenTile = new Rect();
         screenBigTile = new Rect();
         mapa = Main.game.maps.getMapa();
-
-        ShaderProgram.pedantic = false;
-        FileHandle vSH = Gdx.files.internal(getPassVSH());
-        shadowMapSH = new ShaderProgram(vSH, Gdx.files.internal(getShadowMapFSH()));
-        shadowRenderSH = new ShaderProgram(vSH, Gdx.files.internal(getShadowRenderFSH()));
-        shadowCombineSH = new ShaderProgram(vSH, Gdx.files.internal(getShadowCombineFSH()));
-
-
-        // ONLY DEBUG
-        lightSize = 256;
-
-        //build frame buffers
-        occludersFBO = new FrameBuffer(Pixmap.Format.RGBA8888, lightSize, lightSize, false);
-        occluders = occludersFBO.getColorBufferTexture();
-
-        shadowMapFBO = new FrameBuffer(Pixmap.Format.RGBA8888, lightSize, 1, false);
-        shadowMap1D = shadowMapFBO.getColorBufferTexture();
-
-        tercerFBO = new FrameBuffer(Pixmap.Format.RGBA8888, SCR_WIDTH, SCR_HEIGHT, false);
-        tercer = new TextureRegion(tercerFBO.getColorBufferTexture());
-
-
     }
 
     public boolean isMoving() {
@@ -169,17 +122,12 @@ public class World extends Actor {
     }
 
     public void render(Stage stage) {
+
         int x, y;
         MapTile tile;
         Position tempPos = new Position();
         Position minOffset = new Position();
         Position screen = new Position();
-
-        Array<DrawData> qLights = new Array();
-        Array<DrawData> qCapa1y2 = new Array();
-        Array<DrawData> qCapa3 = new Array();
-        Array<DrawData> qCapa4 = new Array();
-
 
         int halfWindowsTileWidth = WINDOWS_TILE_WIDTH / 2;
         int halfWindowsTileHeight = WINDOWS_TILE_HEIGHT / 2;
@@ -235,6 +183,9 @@ public class World extends Actor {
         if (screenTile.getX2() < mapa.getSize().getX2())
             screenTile.addX2(1);
 
+        screen.addX(-1);
+        screen.addY(-1);
+
 
         DrawParameter dpA = new DrawParameter();
         dpA.setAnimated(true);
@@ -243,35 +194,47 @@ public class World extends Actor {
         dpAC.setAnimated(true);
         dpAC.setCenter(true);
 
+        for (x = (int)screenTile.getX1(); x <= (int)screenTile.getX2(); x++) {
+            tempPos.setX(screen.getX() * TILE_PIXEL_WIDTH + offset.getX());
+            for (y = (int)screenTile.getY1(); y <= (int)screenTile.getY2(); y++) {
+                tempPos.setY(screen.getY() * TILE_PIXEL_HEIGHT + offset.getY());
+                tile = mapa.getTile(x - 1, y - 1);
+
+                // Capa 1
+                Drawer.drawGrh(stage.getBatch(), tile.getCapa(0), tempPos.getX(), tempPos.getY(), dpA);
+
+                // Capa 2
+                if (tile.getCapa(1) != null)
+                    Drawer.drawGrh(stage.getBatch(), tile.getCapa(1), tempPos.getX(), tempPos.getY(), dpAC);
+
+                screen.addY(1);
+            }
+
+            screen.addY(-y + screenTile.getY1());
+            screen.addX(1);
+        }
+
 
         screen.setX(minOffset.getX() - TILE_BUFFER_SIZE_X);
         screen.setY(minOffset.getY() - TILE_BUFFER_SIZE_Y);
 
-        // Analizar región del mapa
         for (x = (int)screenBigTile.getX1(); x <= (int)screenBigTile.getX2(); x++) {
-            tempPos.setX(getX() + screen.getX() * TILE_PIXEL_WIDTH + offset.getX());
+            tempPos.setX(screen.getX() * TILE_PIXEL_WIDTH + offset.getX());
             for (y = (int)screenBigTile.getY1(); y <= (int)screenBigTile.getY2(); y++) {
-                tempPos.setY(SCR_HEIGHT - getY() - getHeight() + screen.getY() * TILE_PIXEL_HEIGHT + offset.getY());
+                tempPos.setY(screen.getY() * TILE_PIXEL_HEIGHT + offset.getY());
                 tile = mapa.getTile(x - 1, y - 1);
 
-                Position thisPos = new Position(tempPos.getX(), tempPos.getY());
+                // Objetos
+                if (tile.getObjeto() != null)
+                    if (tile.getObjeto().getGrh() != null)
+                        Drawer.drawGrh(stage.getBatch(), tile.getObjeto().getGrh(), tempPos.getX(), tempPos.getY(), dpAC);
 
-                if (screenTile.isPointIn(x, y)) {
-                    qCapa1y2.add(new DrawData(tile, thisPos, T_CAPA1));
-                    if (tile.getCapa(1) != null)
-                        qCapa1y2.add(new DrawData(tile ,thisPos, T_CAPA2));
-                }
+                // Personajes
 
-                if (tile.getLight() != null)
-                    qLights.add(new DrawData(tile, thisPos));
 
+                // Capa 3
                 if (tile.getCapa(2) != null)
-                    qCapa3.add(new DrawData(tile, thisPos, T_CAPA3));
-
-                if (!techo) {
-                    if (tile.getCapa(3) != null)
-                        qCapa4.add(new DrawData(tile, thisPos));
-                }
+                    Drawer.drawGrh(stage.getBatch(), tile.getCapa(2), tempPos.getX(), tempPos.getY(), dpAC);
 
                 screen.addY(1);
             }
@@ -280,127 +243,27 @@ public class World extends Actor {
         }
 
 
-        stage.getBatch().end();
-
-        stage.getBatch().setBlendFunction(GL_SRC_ALPHA, GL_ONE);
-
-        tercerFBO.begin();
-        Gdx.gl.glClearColor(0f,0f,0f,0f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        tercerFBO.end();
-
-        int mx, my;
-        OrthographicCamera cam = (OrthographicCamera)stage.getCamera();
-
-        for (DrawData dd : qLights) {
-
-            Light luz = dd.tile.getLight();
-
-            mx = Gdx.input.getX();
-            my = SCR_HEIGHT - Gdx.input.getY();
-
-            //PASO 1 (FBO de lo que hace sombra justo sobre UNA parte (rectangulo en donde hay una luz)).
-            occludersFBO.begin();
-            Gdx.gl.glClearColor(0f,0f,0f,0f);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-            cam.setToOrtho(false, occludersFBO.getWidth(), occludersFBO.getHeight());
-            cam.translate(dd.pos.getX() - lightSize/2f, SCR_HEIGHT - dd.pos.getY() - lightSize/2f);
-            cam.update();
-            stage.getBatch().setProjectionMatrix(cam.combined);
-
-            stage.getBatch().setShader(null);
-            stage.getBatch().begin();
-                // Dibujar lo que hace sombra
-                for (DrawData dd2 : qCapa3) {
-                    switch (dd2.tipo) {
-                        case T_CAPA3:
-                            Drawer.drawGrh(stage.getBatch(), dd2.tile.getCapa(2), dd2.pos.getX(), dd2.pos.getY(), dpAC);
-                            break;
-                    }
-                }
-            stage.getBatch().end();
-            occludersFBO.end();
-
-
-            // PASO 2 (FBO con algunos calculos iniciales de UNA luz)
-            shadowMapFBO.begin();
-            Gdx.gl.glClearColor(0f,0f,0f,0f);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-            cam.setToOrtho(false, shadowMapFBO.getWidth(), shadowMapFBO.getHeight());
-            stage.getBatch().setProjectionMatrix(cam.combined);
-
-            stage.getBatch().setShader(shadowMapSH);
-            stage.getBatch().begin();
-            shadowMapSH.setUniformf("resolution", lightSize, lightSize);
-            stage.getBatch().draw(occluders, 0, 0, lightSize, shadowMapFBO.getHeight());
-            stage.getBatch().end();
-            shadowMapFBO.end();
-
-
-            // PASO 3 (FBO que va acumulando todas las luces)
-            tercerFBO.begin();
-
-            cam.setToOrtho(false);
-            stage.getBatch().setProjectionMatrix(cam.combined);
-
-            stage.getBatch().setShader(shadowRenderSH);
-            stage.getBatch().begin();
-            shadowRenderSH.setUniformf("resolution", lightSize, lightSize);
-            shadowRenderSH.setUniformf("softShadows", true ? 1f : 0f);
-            shadowRenderSH.setUniformf("defColor", Drawer.getDefColor());
-            shadowRenderSH.setUniformf("intensity", luz.getIntensidad());
-            Color batchColor = stage.getBatch().getColor();
-            stage.getBatch().setColor(dd.tile.getLight().getColor());
-            stage.getBatch().draw(shadowMap1D, dd.pos.getX() -lightSize/2f, SCR_HEIGHT - dd.pos.getY() -lightSize/2f, lightSize, lightSize);
-            stage.getBatch().setColor(batchColor);
-            stage.getBatch().end();
-            tercerFBO.end();
-        }
-
-        stage.getBatch().setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
-        cam.setToOrtho(false);
-        stage.getBatch().setProjectionMatrix(cam.combined);
-
-        stage.getBatch().setShader(shadowCombineSH);
-        stage.getBatch().begin();
-        tercer.getTexture().bind(1);
-        shadowCombineSH.setUniformi("u_light", 1);
-        shadowCombineSH.setUniformf("resolution", SCR_WIDTH, SCR_HEIGHT);
-
-
-        Gdx.graphics.getGL20().glActiveTexture(GL20.GL_TEXTURE0);
-
-
-        for (DrawData dd: qCapa1y2) {
-            Drawer.drawGrh(stage.getBatch(), dd.tile.getCapa(dd.tipo), dd.pos.getX(), dd.pos.getY(), dpAC);
-        }
-
-        stage.getBatch().end();
-        stage.getBatch().setShader(null);
-        stage.getBatch().begin();
-
-        /*TextureRegion asd = new TextureRegion(tercer);
-        asd.flip(false, true);
-        stage.getBatch().draw(asd, 0, 0);
-*/
-
-        for (DrawData dd : qCapa3) {
-            switch (dd.tipo) {
-                case T_CAPA3:
-                    Drawer.drawGrh(stage.getBatch(), dd.tile.getCapa(2), dd.pos.getX(), dd.pos.getY(), dpAC);
-                    break;
-            }
-        }
-
-
         if (!techo) {
-            for (DrawData dd : qCapa4) {
-                Drawer.drawGrh(stage.getBatch(), dd.tile.getCapa(3), dd.pos.getX(), dd.pos.getY(), dpAC);
+            screen.setX(minOffset.getX() - TILE_BUFFER_SIZE_X);
+            screen.setY(minOffset.getY() - TILE_BUFFER_SIZE_Y);
+
+            for (x = (int) screenBigTile.getX1(); x <= (int) screenBigTile.getX2(); x++) {
+                tempPos.setX(screen.getX() * TILE_PIXEL_WIDTH + offset.getX());
+                for (y = (int) screenBigTile.getY1(); y <= (int) screenBigTile.getY2(); y++) {
+                    tempPos.setY(screen.getY() * TILE_PIXEL_HEIGHT + offset.getY());
+                    tile = mapa.getTile(x - 1, y - 1);
+
+                    // Capa 4
+                    if (tile.getCapa(3) != null)
+                        Drawer.drawGrh(stage.getBatch(), tile.getCapa(3), tempPos.getX(), tempPos.getY(), dpAC);
+
+                    screen.addY(1);
+                }
+                screen.addY(-y + screenBigTile.getY1());
+                screen.addX(1);
             }
         }
+
     }
 
 
