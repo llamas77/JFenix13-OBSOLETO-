@@ -40,7 +40,7 @@ public final class Drawer {
 
     static {
         dp = new DrawParameter();
-        defColor = new Color(1, 1, 1, 1);
+        setDefColor(Color.WHITE);
         containerRect = new Stack();
         containerRect.push(new Rectangle(0, 0, SCR_WIDTH, SCR_HEIGHT));
     }
@@ -143,23 +143,25 @@ public final class Drawer {
                 y += - reg.getRegionHeight() + TILE_PIXEL_HEIGHT;
         }
 
+        // Transforma el Y tomando el origen arriba, por un Y tomando el origen abajo
         y = (int)containerRect.peek().getHeight() - y - reg.getRegionHeight();
 
+        // Lleva los puntos al sis. de coordenadas de la Pantalla
         x += containerRect.peek().getX();
         y += containerRect.peek().getY();
 
         Sprite sp = new Sprite(reg);
 
-        // Que el color final dependa del color por default
+        // El color final depende del color por default
         Color[] c = dp.getColors();
 
-        if (dp.isLight())
+        if (defColor == Color.WHITE || dp.isLight())
+            // Para evitar multiplicar cada elemento del color por el color por defecto
             sp.setColors(c);
         else
             for (int i = 0; i < c.length; i++)
                 sp.setVertColor(i, new Color(c[i].r * defColor.r, c[i].g * defColor.g, c[i].b * defColor.b,
                         c[i].a * defColor.a));
-
 
         sp.setAlphas(dp.getAlphas());
 
@@ -167,7 +169,6 @@ public final class Drawer {
         sp.setPosition(x, y);
         sp.rotate(dp.getRotation());
         sp.flip(dp.isFlipX(), dp.isFlipY());
-
 
         if (dp.isBlend())
             batch.setBlendFunction(dp.getBlendSrcFunc(), dp.getBlendDstFunc());
@@ -188,11 +189,11 @@ public final class Drawer {
 
         switch (tipoGrafico) {
             case PRINCIPAL:
-                // Busca en gráficos normales
+                // Busca entre texturas chicas (1024x1024)
                 atlas = Main.game.assets.getAM().get(getAtlasNormTexDir(), TextureAtlas.class);
                 reg = atlas.findRegion("" + numGrafico);
 
-                // Si no existe, busca entre los gráficos grandes
+                // Si no existe, busca entre texturas grandes (2048x2048)
                 if (reg == null) {
                     atlas = Main.game.assets.getAM().get(getAtlasBigTexDir(), TextureAtlas.class);
                     reg = atlas.findRegion("" + numGrafico);
@@ -207,7 +208,7 @@ public final class Drawer {
         // Verificamos si hay que buscar una región específica de la textura.
         if (r != null)
             if (reg != null)
-            reg = new TextureRegion(reg, (int) r.getX1(), (int) r.getY1(), (int) r.getWidth(), (int) r.getHeight());
+                reg = new TextureRegion(reg, (int) r.getX1(), (int) r.getY1(), (int) r.getWidth(), (int) r.getHeight());
 
         return reg;
     }
@@ -232,6 +233,7 @@ public final class Drawer {
 
 
         for (int i = 0; i < text.length(); i++) {
+            // Si el caracter no existe muestra un '?'
             try {
                 c = font.getChars()[text.charAt(i)];
             } catch (ArrayIndexOutOfBoundsException ex){
@@ -260,7 +262,7 @@ public final class Drawer {
     }
 
     public static void setDefColor(float r, float g, float b, float a) {
-        defColor.set(r, g, b, a);
+        setDefColor(new Color(r, g, b, a));
     }
 
     public static void setDefColor(Color color) {

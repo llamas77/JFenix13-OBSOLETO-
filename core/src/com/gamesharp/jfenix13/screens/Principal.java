@@ -93,7 +93,7 @@ public class Principal extends Screen {
 
         stage.getBatch().begin();
 
-            Drawer.setDefColor(150, 150, 150, 255);
+            //Drawer.setDefColor(255, 128, 50, 255);
 
             Drawer.pushScissors(stage, world.getRect());
             checkKeys();
@@ -101,7 +101,7 @@ public class Principal extends Screen {
             world.render(stage);
             Drawer.popScissors(stage);
 
-            Drawer.setDefColor(255, 255, 255, 255);
+            //Drawer.setDefColor(255, 255, 255, 255);
 
         stage.getBatch().end();
 
