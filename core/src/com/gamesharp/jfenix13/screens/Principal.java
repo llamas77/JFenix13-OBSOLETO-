@@ -3,6 +3,7 @@ package com.gamesharp.jfenix13.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -96,12 +97,14 @@ public class Principal extends Screen {
             //Drawer.setDefColor(255, 128, 50, 255);
 
             Drawer.pushScissors(stage, world.getRect());
+            Drawer.pushScissors(stage,  new Rectangle(0, 0, 736, 544));
             checkKeys();
             world.move();
             world.render(stage);
             Drawer.popScissors(stage);
+            Drawer.popScissors(stage);
 
-            //Drawer.setDefColor(255, 255, 255, 255);
+            Drawer.setDefColor(255, 255, 255, 255);
 
         stage.getBatch().end();
 

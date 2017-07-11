@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.gamesharp.jfenix13.general.Main;
 import com.gamesharp.jfenix13.general.Rect;
@@ -34,15 +35,15 @@ public final class Drawer {
     public static final int FUENTE = 1;
 
 
-    public static Stack<Rectangle> containerRect;
+    public static Array<Rectangle> containerRect;
     private static DrawParameter dp;
     private static Color defColor;
 
     static {
         dp = new DrawParameter();
         setDefColor(Color.WHITE);
-        containerRect = new Stack();
-        containerRect.push(new Rectangle(0, 0, SCR_WIDTH, SCR_HEIGHT));
+        containerRect = new Array();
+        containerRect.add(new Rectangle(0, 0, SCR_WIDTH, SCR_HEIGHT));
     }
 
     public static void pushScissors(Stage stage, float x, float y, float width, float height) {
@@ -53,13 +54,20 @@ public final class Drawer {
      * Hace que todo lo que se dibuje luego, se limite a un rectángulo determinado por rect.
      */
     public static void pushScissors(Stage stage, Rectangle rect) {
+        float rectX = rect.getX(), rectY = rect.getY();
+        for(int i = 0; i < containerRect.size; i++) {
+            rectX += containerRect.get(i).getX();
+            rectY += containerRect.get(i).getY();
+        }
+        rect.set(rectX, rectY, rect.getWidth(), rect.getHeight());
+
         Rectangle scissors = new Rectangle();
         Viewport vp = stage.getViewport();
         ScissorStack.calculateScissors(stage.getCamera(), vp.getScreenX(), vp.getScreenY(),
                 vp.getScreenWidth(), vp.getScreenHeight(), stage.getBatch().getTransformMatrix(), rect, scissors);
         stage.getBatch().flush(); // para que lo que se dibuja antes se renderize antes de verse afectado por esto
         ScissorStack.pushScissors(scissors);
-        containerRect.push(rect);
+        containerRect.add(rect);
     }
 
     /**
@@ -147,8 +155,12 @@ public final class Drawer {
         y = (int)containerRect.peek().getHeight() - y - reg.getRegionHeight();
 
         // Lleva los puntos al sis. de coordenadas de la Pantalla
-        x += containerRect.peek().getX();
-        y += containerRect.peek().getY();
+        for(int i = 0; i < containerRect.size; i++) {
+            x += containerRect.get(i).getX();
+            y += containerRect.get(i).getY();
+        }
+
+
 
         Sprite sp = new Sprite(reg);
 
